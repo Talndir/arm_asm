@@ -72,9 +72,9 @@ inline void RAM<T>::Store()
 template<typename T>
 inline void RAM<T>::Execute()
 {
-	if ((uint8_t)((controlBus->Get() && 0x0F00) >> 8) == 0b0100)
+	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0100)
 	{
-		switch ((uint8_t)(controlBus->Get() && 0x00FF))
+		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
 		case 0x00:
 			Load();

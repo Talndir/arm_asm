@@ -69,9 +69,9 @@ inline void RegisterFile<T>::Write()
 template<typename T>
 inline void RegisterFile<T>::Execute()
 {
-	if ((uint8_t)((controlBus->Get() && 0x0F00) >> 8) == 0b0010)
+	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0010)
 	{
-		switch ((uint8_t)(controlBus->Get() && 0x00FF))
+		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
 		case 0x00:
 			Read();

@@ -61,5 +61,4 @@ inline Computer<T>::~Computer()
 template<typename T>
 inline void Computer<T>::Run()
 {
-	ram.PrintVDU();
 }

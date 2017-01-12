@@ -76,9 +76,9 @@ inline void ALU<T>::Write()
 template<typename T>
 inline void ALU<T>::Execute()
 {
-	if ((uint8_t)((controlBus->Get() && 0x0F00) >> 8) == 0b0001)
+	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0001)
 	{
-		switch ((uint8_t)(controlBus->Get() && 0x00FF))
+		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
 		case 0x00:
 			acc.Set(r0.Get() + r1.Get());
@@ -87,10 +87,10 @@ inline void ALU<T>::Execute()
 			acc.Set(r0.Get() - r1.Get());
 			break;
 		case 0x02:
-			acc.Set(r0.Get() && r1.Get());
+			acc.Set(r0.Get() & r1.Get());
 			break;
 		case 0x03:
-			acc.Set(r0.Get() || r1.Get());
+			acc.Set(r0.Get() | r1.Get());
 			break;
 		case 0x04:
 			acc.Set(!r0.Get());
@@ -100,6 +100,15 @@ inline void ALU<T>::Execute()
 			break;
 		case 0x06:
 			acc.Set(r0.Get() ^ r1.Get());
+			break;
+		case 0x07:
+			acc.Set(r0.Get() << r1.Get());
+			break;
+		case 0x08:
+			acc.Set(r0.Get() >> r1.Get());
+			break;
+		case 0x09:
+			acc.Set(r0.Get() % r1.Get());
 			break;
 
 		case 0xF0:
