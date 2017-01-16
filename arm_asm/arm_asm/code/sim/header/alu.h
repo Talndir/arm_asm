@@ -23,7 +23,7 @@ public:
 	~ALU();
 
 	void Read(int n);
-	void Write();
+	void Write(int n);
 	void Execute();
 
 private:
@@ -65,11 +65,22 @@ inline void ALU<T>::Read(int n)
 		r1.Set(dataBus->Get());
 }
 
-// Writes value of acc onto data bus
+// Writes value of acc onto data bus or an internal register
 template<typename T>
-inline void ALU<T>::Write()
+inline void ALU<T>::Write(int n)
 {
-	dataBus->Set(acc.Get());
+	switch (n)
+	{
+	case 0:
+		r0.Set(acc.Get());
+		break;
+	case 1:
+		r1.Set(acc.Get());
+		break;
+	case 2:
+		dataBus->Set(acc.Get());
+		break;
+	}
 }
 
 // Executes operation specified by value on control bus
@@ -78,7 +89,7 @@ inline void ALU<T>::Execute()
 {
 	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0001)
 	{
-		switch ((uint8_t)(controlBus->Get() & 0x00FF))
+		switch ((uint8_t)(controlBus->Get() & 0x003F))
 		{
 		case 0x00:
 			acc.Set(r0.Get() + r1.Get());
@@ -118,7 +129,29 @@ inline void ALU<T>::Execute()
 			Read(1);
 			break;
 		case 0xF2:
-			Write();
+			Write(0);
+			break;
+		case 0xF3:
+			Write(1);
+			break;
+		case 0xF4:
+			Write(2);
+			break;
+		}
+
+		switch ((uint8_t)((controlBus->Get() & 0x00C0) >> 6))
+		{
+		case 0:
+			break;
+		case 1:
+			Write(0);
+			break;
+		case 2:
+			Write(1);
+			break;
+		case 3:
+			Write(2);
+			break;
 		}
 	}
 }

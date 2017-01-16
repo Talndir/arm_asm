@@ -53,5 +53,8 @@
     <ClInclude Include="code\sim\header\computer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\sim\header\instruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

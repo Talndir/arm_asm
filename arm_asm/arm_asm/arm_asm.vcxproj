@@ -46,6 +46,7 @@
     <ClInclude Include="code\sim\header\decoder.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="code\sim\header\instruction.h" />
     <ClInclude Include="code\sim\header\ram.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
