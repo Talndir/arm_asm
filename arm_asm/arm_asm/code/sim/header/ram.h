@@ -25,7 +25,7 @@ public:
 
 	void Load();
 	void Store();
-	void Execute();
+	void Tick();
 
 	void PrintVDU();
 
@@ -70,7 +70,7 @@ inline void RAM<T>::Store()
 
 // Executes operation specified by value on control bus
 template<typename T>
-inline void RAM<T>::Execute()
+inline void RAM<T>::Tick()
 {
 	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0100)
 	{

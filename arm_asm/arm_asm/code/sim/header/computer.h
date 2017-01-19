@@ -24,6 +24,7 @@ public:
 	~Computer();
 
 	void Run();
+	void Tick();
 
 private:
 	ControlBus<T> controlBus;
@@ -49,6 +50,8 @@ inline Computer<T>::Computer()
 	decoder = Decoder<T>(controlBus, addressBus, dataBus);
 	ram = RAM<T>(controlBus, addressBus, dataBus, 1<<16);
 	registerFile = RegisterFile<T>(controlBus, addressBus, dataBus, 16);
+
+	decoder.Link(*this);
 }
 
 // Destructor
@@ -61,4 +64,13 @@ inline Computer<T>::~Computer()
 template<typename T>
 inline void Computer<T>::Run()
 {
+}
+
+// Tick all systems in computer at once
+template<typename T>
+inline void Computer<T>::Tick()
+{
+	alu.Tick();
+	ram.Tick();
+	registerFile.Tick();
 }

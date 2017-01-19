@@ -24,7 +24,7 @@ public:
 
 	void Read();
 	void Write();
-	void Execute();
+	void Tick();
 
 private:
 	std::vector<T> registers;
@@ -67,7 +67,7 @@ inline void RegisterFile<T>::Write()
 
 // Executes operation specified by value on control bus
 template<typename T>
-inline void RegisterFile<T>::Execute()
+inline void RegisterFile<T>::Tick()
 {
 	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0010)
 	{

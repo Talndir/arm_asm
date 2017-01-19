@@ -14,6 +14,9 @@
 	Helper functions for decoding.
 */
 
+#include <vector>
+
+//#include "../../sim/header/computer.h"
 #include "../../sim/header/component.h"
 #include "../../sim/header/instruction.h"
 
@@ -26,13 +29,22 @@ public:
 	Decoder(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d);
 	~Decoder();
 
+	void Link(Computer<T>& c);
+
 	void Read();
 	void Decode();
 	void Execute();
 
+	void GetRegister(int n);
+	void GetMemory(int n);
+	void StoreRegister(int n);
+	void StoreMemory(int n);
+	void SendToALU(int n);
+
 private:
 	Register<uint32_t> cir;
 	std::vector<Instruction> microcode;
+	Computer<T>* computer;
 };
 
 /* Function definitions */
@@ -53,6 +65,13 @@ inline Decoder<T>::Decoder(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d) : 
 template<typename T>
 inline Decoder<T>::~Decoder()
 {
+}
+
+// Links containing computer for program execution
+template<typename T>
+inline void Decoder<T>::Link(Computer<T>& c)
+{
+	computer = &c;
 }
 
 // Reads next instruction
@@ -112,7 +131,7 @@ inline void Decoder<T>::Decode()
 		temp.data = (b << 4) + c;
 		op3.push_back(temp);
 
-		temp.control = 0x01C0;
+		temp.control = 0x3100;
 		temp.address = 0;
 		temp.data = 0;
 		op3.push_back(temp);
@@ -125,7 +144,8 @@ inline void Decoder<T>::Decode()
 
 	switch (opcode)
 	{
-
+	default:
+		break;
 	}
 }
 
@@ -133,4 +153,67 @@ inline void Decoder<T>::Decode()
 template<typename T>
 inline void Decoder<T>::Execute()
 {
+	for (unsigned int i = 0; i < microcode.size(); ++i)
+	{
+		if (microcode.at(i).control != 0xFFFF) dataBus.Set(microcode.at(i).control);
+		if (microcode.at(i).control != 0xFFFF) dataBus.Set(microcode.at(i).address);
+		if (microcode.at(i).control != 0xFFFF) dataBus.Set(microcode.at(i).data);
+
+		computer->Tick();
+	}
+}
+
+// Helper function - adds microcode to retrieve contents of Rn from register file
+template<typename T>
+inline void Decoder<T>::GetRegister(int n)
+{
+	Instruction i;
+	i.control = 0x0200;
+	i.address = n;
+	i.data = 0xFFFF;
+	microcode.push_back(i);
+}
+
+// Helper function - adds microcode to retrieve contents of address n from RAM
+template<typename T>
+inline void Decoder<T>::GetMemory(int n)
+{
+	Instruction i;
+	i.control = 0x0400;
+	i.address = n;
+	i.data = 0xFFFF;
+	microcode.push_back(i);
+}
+
+// Helper function - adds microcode to store value in Rn in register file
+template<typename T>
+inline void Decoder<T>::StoreRegister(int n)
+{
+	Instruction i;
+	i.control = 0x0201;
+	i.address = n;
+	i.data = 0xFFFF;
+	microcode.push_back(i);
+}
+
+// Helper function - adds microcode to store value in address n of RAM
+template<typename T>
+inline void Decoder<T>::StoreMemory(int n)
+{
+	Instruction i;
+	i.control = 0x0401;
+	i.address = n;
+	i.data = 0xFFFF;
+	microcode.push_back(i);
+}
+
+// Helper function - adds microcode for ALU to read data bus into internal register n
+template<typename T>
+inline void Decoder<T>::SendToALU(int n)
+{
+	Instruction i;
+	i.control = 0x08F0 + n;
+	i.address = 0xFFFF;
+	i.data = 0xFFFF;
+	microcode.push_back(i);
 }

@@ -24,7 +24,7 @@ public:
 
 	void Read(int n);
 	void Write(int n);
-	void Execute();
+	void Tick();
 
 private:
 	Register<T> r0;
@@ -85,11 +85,11 @@ inline void ALU<T>::Write(int n)
 
 // Executes operation specified by value on control bus
 template<typename T>
-inline void ALU<T>::Execute()
+inline void ALU<T>::Tick()
 {
 	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0001)
 	{
-		switch ((uint8_t)(controlBus->Get() & 0x003F))
+		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
 		case 0x00:
 			acc.Set(r0.Get() + r1.Get());
@@ -139,7 +139,7 @@ inline void ALU<T>::Execute()
 			break;
 		}
 
-		switch ((uint8_t)((controlBus->Get() & 0x00C0) >> 6))
+		switch ((uint8_t)((controlBus->Get() & 0xF000) >> 24))
 		{
 		case 0:
 			break;
