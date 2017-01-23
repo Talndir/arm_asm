@@ -41,6 +41,9 @@ public:
 	void StoreMemory(int n);
 	void SendToALU(int n);
 
+	void Tick();
+	void Print();
+
 private:
 	Register<uint32_t> cir;
 	std::vector<Instruction> microcode;
@@ -142,11 +145,22 @@ inline void Decoder<T>::Decode()
 		break;
 	}
 
+	/*
 	switch (opcode)
 	{
 	default:
 		break;
 	}
+	*/
+	
+	microcode.push_back(Instruction(0x0201, 0x0000, 0x000A));
+	microcode.push_back(Instruction(0x0201, 0x0001, 0x0014));
+	microcode.push_back(Instruction(0x0200, 0x0000, 0x0000));
+	microcode.push_back(Instruction(0x01F0, 0x0000, 0xFFFF));
+	microcode.push_back(Instruction(0x0200, 0x0001, 0x0000));
+	microcode.push_back(Instruction(0x01F1, 0x0000, 0xFFFF));
+	microcode.push_back(Instruction(0x3100, 0x0000, 0x0000));
+	microcode.push_back(Instruction(0x0401, 0x0005, 0xFFFF));
 }
 
 // Executes decoded instruction
@@ -155,9 +169,9 @@ inline void Decoder<T>::Execute()
 {
 	for (unsigned int i = 0; i < microcode.size(); ++i)
 	{
-		if (microcode.at(i).control != 0xFFFF) dataBus.Set(microcode.at(i).control);
-		if (microcode.at(i).control != 0xFFFF) dataBus.Set(microcode.at(i).address);
-		if (microcode.at(i).control != 0xFFFF) dataBus.Set(microcode.at(i).data);
+		if (microcode.at(i).control != 0xFFFF) controlBus->Set(microcode.at(i).control);
+		if (microcode.at(i).address != 0xFFFF) addressBus->Set(microcode.at(i).address);
+		if (microcode.at(i).data != 0xFFFF) dataBus->Set(microcode.at(i).data);
 
 		computer->Tick();
 	}
@@ -216,4 +230,17 @@ inline void Decoder<T>::SendToALU(int n)
 	i.address = 0xFFFF;
 	i.data = 0xFFFF;
 	microcode.push_back(i);
+}
+
+template<typename T>
+inline void Decoder<T>::Tick()
+{
+}
+
+// Print internal registers
+template<typename T>
+inline void Decoder<T>::Print()
+{
+	std::cout << "Decoder" << std::endl;
+	std::cout << "CIR: " << std::hex << cir.Get() << std::endl;
 }

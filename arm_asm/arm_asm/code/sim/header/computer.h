@@ -64,6 +64,10 @@ inline Computer<T>::~Computer()
 template<typename T>
 inline void Computer<T>::Run()
 {
+	decoder.Decode();
+	decoder.Execute();
+	ram.PrintVDU();
+	registerFile.Print();
 }
 
 // Tick all systems in computer at once

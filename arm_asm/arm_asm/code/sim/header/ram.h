@@ -25,8 +25,9 @@ public:
 
 	void Load();
 	void Store();
-	void Tick();
 
+	void Tick();
+	void Print();
 	void PrintVDU();
 
 private:
@@ -83,6 +84,23 @@ inline void RAM<T>::Tick()
 			Store();
 			break;
 		}
+	}
+}
+
+// Prints contents of RAM
+template<typename T>
+inline void RAM<T>::Print()
+{
+	std::cout << "RAM" << std::endl;
+
+	for (unsigned int i = 0; i < memory.size(); ++i)
+	{
+		std::cout << std::hex << memory.at(i);
+		
+		if ((i + 1) % 16)
+			std::cout << std::endl;
+		else
+			std::cout << " " << std::endl;
 	}
 }
 

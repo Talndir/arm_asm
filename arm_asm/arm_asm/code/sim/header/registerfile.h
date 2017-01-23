@@ -9,6 +9,7 @@
 */
 
 #include <vector>
+#include <iostream>
 
 #include "../../sim/header/component.h"
 #include "../../sim/header/register.h"
@@ -24,7 +25,9 @@ public:
 
 	void Read();
 	void Write();
+	
 	void Tick();
+	void Print();
 
 private:
 	std::vector<T> registers;
@@ -81,4 +84,12 @@ inline void RegisterFile<T>::Tick()
 			break;
 		}
 	}
+}
+
+// Prints contents of registers
+template<typename T>
+inline void RegisterFile<T>::Print()
+{
+	for (unsigned int i = 0; i < registers.size(); ++i)
+		std::cout << "R" << i << ": " << std::hex << registers.at(i) << std::endl;
 }

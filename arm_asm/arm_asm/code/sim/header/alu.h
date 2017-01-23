@@ -24,7 +24,9 @@ public:
 
 	void Read(int n);
 	void Write(int n);
+
 	void Tick();
+	void Print();
 
 private:
 	Register<T> r0;
@@ -139,7 +141,7 @@ inline void ALU<T>::Tick()
 			break;
 		}
 
-		switch ((uint8_t)((controlBus->Get() & 0xF000) >> 24))
+		switch ((uint8_t)((controlBus->Get() & 0xF000) >> 12))
 		{
 		case 0:
 			break;
@@ -154,4 +156,14 @@ inline void ALU<T>::Tick()
 			break;
 		}
 	}
+}
+
+// Prints contents of ALU registers
+template<typename T>
+inline void ALU<T>::Print()
+{
+	std::cout << "ALU" << std::endl;
+	std::cout << "R0: " << std::hex << r0.Get() << std::endl;
+	std::cout << "R1: " << std::hex << r1.Get() << std::endl;
+	std::cout << "ACC: " << std::hex << acc.Get() << std::endl;
 }

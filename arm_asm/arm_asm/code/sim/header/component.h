@@ -7,6 +7,8 @@
 	This class is abstract and used as a parent class for other classes.
 */
 
+#include <iostream>
+
 #include "../../sim/header/controlbus.h"
 #include "../../sim/header/addressbus.h"
 #include "../../sim/header/databus.h"
@@ -18,7 +20,10 @@ class Component
 public:
 	Component();
 	Component(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d);
-	virtual ~Component() = 0;
+	~Component();
+
+	virtual void Tick() = 0;
+	virtual void Print() = 0;
 
 protected:
 	typename ControlBus<T>* controlBus;
