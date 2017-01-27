@@ -64,8 +64,22 @@ inline Computer<T>::~Computer()
 template<typename T>
 inline void Computer<T>::Run()
 {
-	decoder.Decode();
-	decoder.Execute();
+	std::vector<uint32_t> as;
+	as.push_back(0x0000100A);
+	as.push_back(0x00101014);
+	as.push_back(0x20003100);
+	as.push_back(0x10001005);
+
+	for (unsigned int i = 0; i < as.size(); ++i)
+	{
+		decoder.cir.Set(as.at(i));
+		decoder.Decode();
+		decoder.Execute();
+
+		//ram.PrintVDU();
+		//registerFile.Print();
+	}
+
 	ram.PrintVDU();
 	registerFile.Print();
 }
@@ -74,6 +88,7 @@ inline void Computer<T>::Run()
 template<typename T>
 inline void Computer<T>::Tick()
 {
+	decoder.Tick();
 	alu.Tick();
 	ram.Tick();
 	registerFile.Tick();
