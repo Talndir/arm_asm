@@ -19,9 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code\io\parse.cpp" />
+    <ClCompile Include="code\io\read.cpp" />
     <ClCompile Include="code\main\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="code\io\io.h" />
     <ClInclude Include="code\sim\header\addressbus.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>

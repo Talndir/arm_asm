@@ -18,6 +18,12 @@
     <ClCompile Include="code\main\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\io\parse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\io\read.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\sim\header\bus.h">
@@ -54,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\sim\header\instruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\io\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
