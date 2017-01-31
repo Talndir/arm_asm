@@ -23,7 +23,7 @@ public:
 	Computer();
 	~Computer();
 
-	void Run();
+	void Run(std::vector<uint32_t>& as);
 	void Tick();
 
 private:
@@ -62,13 +62,15 @@ inline Computer<T>::~Computer()
 
 // Run the program
 template<typename T>
-inline void Computer<T>::Run()
+inline void Computer<T>::Run(std::vector<uint32_t>& as)
 {
+	/*
 	std::vector<uint32_t> as;
 	as.push_back(0x0000100A);
 	as.push_back(0x00101014);
 	as.push_back(0x20003100);
 	as.push_back(0x10001005);
+	*/
 
 	for (unsigned int i = 0; i < as.size(); ++i)
 	{

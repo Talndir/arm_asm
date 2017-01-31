@@ -1,2 +1,4 @@
-A BC   , , , , , DEF GHIJ,,,,,
-a, bc,deg,    ghij
+MOV R0, #10
+MOV R1, #20
+ADD R0, R0, R1
+STR R0, #5

@@ -22,6 +22,7 @@ void Read(std::string filename, std::vector<std::vector<std::string>>& data)
 			line.replace(pos, 1, " ");
 
 		line.erase(std::unique(line.begin(), line.end(), BothSpaces), line.end());
+		std::transform(line.begin(), line.end(), line.begin(), ::toupper);
 
 		std::string token;
 
