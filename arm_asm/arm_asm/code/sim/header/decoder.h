@@ -31,6 +31,8 @@ void CombineVectors(std::vector<T>& a, std::vector<T>& b)
 template<typename T>
 class Decoder : public Component<T>
 {
+	friend Computer<T>;
+
 public:
 	Decoder();
 	Decoder(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d);
@@ -38,7 +40,7 @@ public:
 
 	void Link(Computer<T>& c);
 
-	void Read();
+	void Fetch();
 	void Decode();
 	void Execute();
 
@@ -54,10 +56,9 @@ public:
 	void Tick();
 	void Print();
 
-	Register<uint32_t> cir;
-
 private:
-	//Register<uint32_t> cir;
+	Register<uint32_t> cir;
+	Register<T> pc;
 	Register<T> temp;
 	std::vector<Instruction> microcode;
 	Computer<T>* computer;
@@ -75,6 +76,10 @@ inline Decoder<T>::Decoder()
 template<typename T>
 inline Decoder<T>::Decoder(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d) : Component<T>(c, a, d)
 {
+	cir.Set(1);
+	pc.Set(0x1000);
+	temp.Set(0);
+	microcode.clear();
 }
 
 // Destructor
@@ -92,8 +97,26 @@ inline void Decoder<T>::Link(Computer<T>& c)
 
 // Reads next instruction
 template<typename T>
-inline void Decoder<T>::Read()
+inline void Decoder<T>::Fetch()
 {
+	microcode.clear();
+
+	microcode.push_back(Instruction(0x0400, pc.Get(), 0xFFFF));
+	microcode.push_back(Instruction(0x0812, 0xFFFF, 0xFFFF));
+	microcode.push_back(Instruction(0x0830, 0xFFFF, 0xFFFF));
+	microcode.push_back(Instruction(0x0400, pc.Get() + 1, 0xFFFF));
+	microcode.push_back(Instruction(0x0812, 0xFFFF, 0xFFFF));
+	microcode.push_back(Instruction(0x0831, 0xFFFF, 0xFFFF));
+	microcode.push_back(Instruction(0x0400, pc.Get() + 2, 0xFFFF));
+	microcode.push_back(Instruction(0x0812, 0xFFFF, 0xFFFF));
+	microcode.push_back(Instruction(0x0832, 0xFFFF, 0xFFFF));
+	microcode.push_back(Instruction(0x0400, pc.Get() + 3, 0xFFFF));
+	microcode.push_back(Instruction(0x0812, 0xFFFF, 0xFFFF));
+	microcode.push_back(Instruction(0x0833, 0xFFFF, 0xFFFF));
+
+	this->Execute();
+
+	pc.Set(pc.Get() + 4);
 }
 
 // Decodes current instruction
@@ -159,17 +182,6 @@ inline void Decoder<T>::Decode()
 		StoreRegister(operand1);			// Store result in Rn
 		break;
 	}
-	
-	/*
-	microcode.push_back(Instruction(0x0201, 0x0000, 0x000A));
-	microcode.push_back(Instruction(0x0201, 0x0001, 0x0014));
-	microcode.push_back(Instruction(0x0200, 0x0000, 0x0000));
-	microcode.push_back(Instruction(0x01F0, 0x0000, 0xFFFF));
-	microcode.push_back(Instruction(0x0200, 0x0001, 0x0000));
-	microcode.push_back(Instruction(0x01F1, 0x0000, 0xFFFF));
-	microcode.push_back(Instruction(0x3100, 0x0000, 0x0000));
-	microcode.push_back(Instruction(0x0401, 0x0005, 0xFFFF));
-	*/
 }
 
 // Executes decoded instruction
@@ -305,6 +317,18 @@ inline void Decoder<T>::Tick()
 			break;
 		case 0x22:
 			dataBus->Set(temp.Get());
+			break;
+		case 0x30:
+			cir.Set(temp.Get());
+			break;
+		case 0x31:
+			cir.Set(cir.Get() + (temp.Get() << 8));
+			break;
+		case 0x32:
+			cir.Set(cir.Get() + (temp.Get() << 16));
+			break;
+		case 0x33:
+			cir.Set(cir.Get() + (temp.Get() << 24));
 			break;
 		}
 	}

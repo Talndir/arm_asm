@@ -23,7 +23,8 @@ public:
 	Computer();
 	~Computer();
 
-	void Run(std::vector<uint32_t>& as);
+	void Read(std::vector<uint32_t>& as);
+	void Run();
 	void Tick();
 
 private:
@@ -60,26 +61,32 @@ inline Computer<T>::~Computer()
 {
 }
 
-// Run the program
 template<typename T>
-inline void Computer<T>::Run(std::vector<uint32_t>& as)
+inline void Computer<T>::Read(std::vector<uint32_t>& as)
 {
-	/*
-	std::vector<uint32_t> as;
-	as.push_back(0x0000100A);
-	as.push_back(0x00101014);
-	as.push_back(0x20003100);
-	as.push_back(0x10001005);
-	*/
-
 	for (unsigned int i = 0; i < as.size(); ++i)
 	{
-		decoder.cir.Set(as.at(i));
+		ram.memory.at(i * 4 + 0x1000 + 0) = (as.at(i) >> 0) & 0xFF;
+		ram.memory.at(i * 4 + 0x1000 + 1) = (as.at(i) >> 8) & 0xFF;
+		ram.memory.at(i * 4 + 0x1000 + 2) = (as.at(i) >> 16) & 0xFF;
+		ram.memory.at(i * 4 + 0x1000 + 3) = (as.at(i) >> 24) & 0xFF;
+	}
+}
+
+// Run the program
+template<typename T>
+inline void Computer<T>::Run()
+{
+	decoder.Fetch();
+
+	while (decoder.cir.Get())
+	{
 		decoder.Decode();
 		decoder.Execute();
+		decoder.Fetch();
 
-		//ram.PrintVDU();
-		//registerFile.Print();
+		ram.PrintVDU();
+		registerFile.Print();
 	}
 
 	ram.PrintVDU();

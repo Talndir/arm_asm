@@ -18,6 +18,8 @@
 template<typename T>
 class RAM : public Component<T>
 {
+	friend Computer<T>;
+
 public:
 	RAM();
 	RAM(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d, int n);

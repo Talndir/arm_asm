@@ -33,7 +33,8 @@ int main(int argc, char* argv[])
 	*/
 
 	Computer<uint16_t> computer;
-	computer.Run(code);
+	computer.Read(code);
+	computer.Run();
 
 	std::cin.ignore();
 	return 0;
