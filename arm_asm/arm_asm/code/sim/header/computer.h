@@ -85,8 +85,8 @@ inline void Computer<T>::Run()
 		decoder.Execute();
 		decoder.Fetch();
 
-		ram.PrintVDU();
-		registerFile.Print();
+		//ram.PrintVDU();
+		//registerFile.Print();
 	}
 
 	ram.PrintVDU();

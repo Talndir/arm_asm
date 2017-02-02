@@ -30,7 +30,8 @@ public:
 	void Print();
 
 private:
-	std::vector<T> registers;
+	std::vector<Register<T>> registers;
+
 };
 
 /* Function definitions */
@@ -45,7 +46,7 @@ inline RegisterFile<T>::RegisterFile()
 template<typename T>
 inline RegisterFile<T>::RegisterFile(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d, int n) : Component<T>(c, a, d)
 {
-	registers = std::vector<T>(n, (T)0);
+	registers = std::vector<Register<T>>(n, Register<T>());
 }
 
 // Destructor
@@ -58,14 +59,14 @@ inline RegisterFile<T>::~RegisterFile()
 template<typename T>
 inline void RegisterFile<T>::Read()
 {
-	dataBus->Set(registers.at(addressBus->Get()));
+	dataBus->Set(registers.at(addressBus->Get()).Get());
 }
 
 // Writes value on data bus to register specified on address bus
 template<typename T>
 inline void RegisterFile<T>::Write()
 {
-	registers.at(addressBus->Get()) = dataBus->Get();
+	registers.at(addressBus->Get()).Set(dataBus->Get());
 }
 
 // Executes operation specified by value on control bus
@@ -91,5 +92,5 @@ template<typename T>
 inline void RegisterFile<T>::Print()
 {
 	for (unsigned int i = 0; i < registers.size(); ++i)
-		std::cout << "R" << i << ": " << std::hex << registers.at(i) << std::endl;
+		std::cout << "R" << i << ": " << std::hex << registers.at(i).Get() << std::endl;
 }

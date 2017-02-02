@@ -28,6 +28,7 @@ private:
 template<typename T>
 inline Register<T>::Register()
 {
+	value = (T)0;
 }
 
 // Destructor

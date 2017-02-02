@@ -32,6 +32,7 @@ private:
 	Register<T> r0;
 	Register<T> r1;
 	Register<T> acc;
+	Register<uint8_t> sr;
 };
 
 /* Function definitions */
@@ -91,13 +92,19 @@ inline void ALU<T>::Tick()
 {
 	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0001)
 	{
+		bool z = 0, v = 0, c = 0, s = 0;
+
 		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
 		case 0x00:
 			acc.Set(r0.Get() + r1.Get());
+			c = ((acc.Get() & 0x8000) != (r0.Get() & 0x8000)) && (!(acc.Get() & 0x8000));
+			v = ((r0.Get() & 0x8000) == (r1.Get() & 0x8000)) && ((acc.Get() & 0x8000) != (r0.Get() & 0x8000));
 			break;
 		case 0x01:
 			acc.Set(r0.Get() - r1.Get());
+			c = ((acc.Get() & 0x8000) != (r0.Get() & 0x8000)) && ((acc.Get() & 0x8000));
+			v = ((r0.Get() & 0x8000) != (r1.Get() & 0x8000)) && ((acc.Get() & 0x8000) != (r0.Get() & 0x8000));
 			break;
 		case 0x02:
 			acc.Set(r0.Get() & r1.Get());
@@ -141,6 +148,9 @@ inline void ALU<T>::Tick()
 			break;
 		}
 
+		z = !acc.Get();
+		s = acc.Get() & 0x8000;
+
 		switch ((uint8_t)((controlBus->Get() & 0xF000) >> 12))
 		{
 		case 0:
@@ -154,6 +164,11 @@ inline void ALU<T>::Tick()
 		case 3:
 			Write(2);
 			break;
+		}
+
+		if ((uint8_t)(controlBus->Get() & 0x00FF) < 0xF0)
+		{
+			sr.Set((sr.Get() & 0xF0) + z + (c << 1) + (v << 2) + (s << 3));
 		}
 	}
 }
