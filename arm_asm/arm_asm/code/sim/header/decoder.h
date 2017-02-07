@@ -181,6 +181,33 @@ inline void Decoder<T>::Decode()
 		microcode.push_back(Instruction(0x3100, 0x0000, 0x0000));	// Add A0, A1 and deposit onto data bus
 		StoreRegister(operand1);			// Store result in Rn
 		break;
+	case 0x30:	// JMP :LABEL (SUBTRACT FROM PC)
+		CombineVectors(microcode, op3);
+		microcode.push_back(Instruction(0x0840, 0x0000, 0xFFFF));
+		break;
+	case 0x31:	// JMP :LABEL (ADD TO PC)
+		CombineVectors(microcode, op3);
+		microcode.push_back(Instruction(0x0841, 0x0000, 0xFFFF));
+		break;
+	case 0x40:	// CMP R0, O3
+		GetRegister(operand1);
+		SendToALU(0);
+		CombineVectors(microcode, op3);
+		SendToALU(1);
+		microcode.push_back(Instruction(0x01A0, 0x0000, 0x0000));
+		break;
+	case 0x50:	// BNE :LABEL (SUBTRACT FROM PC)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));
+		SaveData(2);
+		CombineVectors(microcode, op3);
+		microcode.push_back(Instruction(0x0842, 0x0000, 0xFFFF));
+		break;
+	case 0x51:	// BNE :LABEL (ADD TO PC)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));
+		SaveData(2);
+		CombineVectors(microcode, op3);
+		microcode.push_back(Instruction(0x0843, 0x0000, 0xFFFF));
+		break;
 	}
 }
 
@@ -329,6 +356,20 @@ inline void Decoder<T>::Tick()
 			break;
 		case 0x33:
 			cir.Set(cir.Get() + (temp.Get() << 24));
+			break;
+		case 0x40:
+			pc.Set(pc.Get() - (dataBus->Get() + 4));
+			break;
+		case 0x41:
+			pc.Set(pc.Get() + (dataBus->Get() - 4));
+			break;
+		case 0x42:
+			if (!(temp.Get() & 0x01))
+				pc.Set(pc.Get() - (dataBus->Get() + 4));
+			break;
+		case 0x43:
+			if (!(temp.Get() & 0x01))
+				pc.Set(pc.Get() + (dataBus->Get() - 4));
 			break;
 		}
 	}

@@ -83,6 +83,9 @@ inline void ALU<T>::Write(int n)
 	case 2:
 		dataBus->Set(acc.Get());
 		break;
+	case 3:
+		dataBus->Set(sr.Get());
+		break;
 	}
 }
 
@@ -93,6 +96,7 @@ inline void ALU<T>::Tick()
 	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b0001)
 	{
 		bool z = 0, v = 0, c = 0, s = 0;
+		T temp;
 
 		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
@@ -131,6 +135,13 @@ inline void ALU<T>::Tick()
 			acc.Set(r0.Get() % r1.Get());
 			break;
 
+		case 0xA0:
+			temp = acc.Get();
+			acc.Set(r0.Get() - r1.Get());
+			c = ((acc.Get() & 0x8000) != (r0.Get() & 0x8000)) && ((acc.Get() & 0x8000));
+			v = ((r0.Get() & 0x8000) != (r1.Get() & 0x8000)) && ((acc.Get() & 0x8000) != (r0.Get() & 0x8000));
+			break;
+
 		case 0xF0:
 			Read(0);
 			break;
@@ -145,6 +156,9 @@ inline void ALU<T>::Tick()
 			break;
 		case 0xF4:
 			Write(2);
+			break;
+		case 0xF5:
+			Write(3);
 			break;
 		}
 
@@ -167,9 +181,9 @@ inline void ALU<T>::Tick()
 		}
 
 		if ((uint8_t)(controlBus->Get() & 0x00FF) < 0xF0)
-		{
 			sr.Set((sr.Get() & 0xF0) + z + (c << 1) + (v << 2) + (s << 3));
-		}
+		if ((uint8_t)(controlBus->Get() & 0x00FF) == 0xA0)
+			acc.Set(temp);
 	}
 }
 
@@ -181,4 +195,5 @@ inline void ALU<T>::Print()
 	std::cout << "R0: " << std::hex << r0.Get() << std::endl;
 	std::cout << "R1: " << std::hex << r1.Get() << std::endl;
 	std::cout << "ACC: " << std::hex << acc.Get() << std::endl;
+	std::cout << "SR: " << std::hex << sr.Get() << std::endl;
 }
