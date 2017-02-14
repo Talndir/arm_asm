@@ -6,6 +6,9 @@
 
 #include <stdint.h>
 
+#define wxUSE_GUI 1
+#include <wx\wxprec.h>
+
 #include "../sim/header/computer.h"
 
 #include "../io/io.h"

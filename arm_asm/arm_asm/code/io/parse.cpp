@@ -83,14 +83,6 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 			op1_ = std::stoi(op1.substr(1));
 			op2_ = std::stoi(op2.substr(1));
 		}
-		/*
-		else if (opcode.at(0) == ':')
-		{
-			jumps.insert(std::make_pair<std::string, int>(opcode.substr(1), i - jumpOffset));
-			label = 1;
-			++jumpOffset;
-		}
-		*/
 		else if (opcode == "JMP")
 		{
 			opcode_ = 0x30;
