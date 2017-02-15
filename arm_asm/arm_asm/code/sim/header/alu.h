@@ -27,6 +27,7 @@ public:
 
 	void Tick();
 	void Print();
+	void Reset();
 
 private:
 	Register<T> r0;
@@ -50,6 +51,7 @@ inline ALU<T>::ALU(ControlBus<T>& c, AddressBus<T>& a, DataBus<T>& d) : Componen
 	r0.Set((T)0);
 	r1.Set((T)0);
 	acc.Set((T)0);
+	sr.Set((T)0);
 }
 
 // Destructor
@@ -196,4 +198,13 @@ inline void ALU<T>::Print()
 	std::cout << "R1: " << std::hex << r1.Get() << std::endl;
 	std::cout << "ACC: " << std::hex << acc.Get() << std::endl;
 	std::cout << "SR: " << std::hex << sr.Get() << std::endl;
+}
+
+template<typename T>
+inline void ALU<T>::Reset()
+{
+	r0.Set((T)0);
+	r1.Set((T)0);
+	acc.Set((T)0);
+	sr.Set((T)0);
 }

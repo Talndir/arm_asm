@@ -6,14 +6,16 @@
 
 #include <stdint.h>
 
-#define wxUSE_GUI 1
-#include <wx\wxprec.h>
+//#include "../sim/header/computer.h"
 
-#include "../sim/header/computer.h"
+//#include "../io/io.h"
 
-#include "../io/io.h"
+#include "../gui/header/app.h"
+
+wxIMPLEMENT_APP(App);
 
 // Entry point
+/*
 int main(int argc, char* argv[])
 {
 	std::vector<std::vector<std::string>> data;
@@ -29,3 +31,4 @@ int main(int argc, char* argv[])
 	std::cin.ignore();
 	return 0;
 }
+*/

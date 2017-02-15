@@ -55,6 +55,7 @@ public:
 
 	void Tick();
 	void Print();
+	void Reset();
 
 private:
 	Register<uint32_t> cir;
@@ -381,4 +382,13 @@ inline void Decoder<T>::Print()
 {
 	std::cout << "Decoder" << std::endl;
 	std::cout << "CIR: " << std::hex << cir.Get() << std::endl;
+}
+
+template<typename T>
+inline void Decoder<T>::Reset()
+{
+	cir.Set(1);
+	pc.Set(0x1000);
+	temp.Set(0);
+	microcode.clear();
 }

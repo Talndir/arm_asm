@@ -27,6 +27,10 @@ public:
 	void Run();
 	void Tick();
 
+	void Reset();
+
+	void GetVDU(std::vector<std::vector<uint8_t>>& v);
+
 private:
 	ControlBus<T> controlBus;
 	AddressBus<T> addressBus;
@@ -101,4 +105,22 @@ inline void Computer<T>::Tick()
 	alu.Tick();
 	ram.Tick();
 	registerFile.Tick();
+}
+
+template<typename T>
+inline void Computer<T>::Reset()
+{
+	controlBus.Reset();
+	addressBus.Reset();
+	dataBus.Reset();
+	alu.Reset();
+	decoder.Reset();
+	ram.Reset();
+	registerFile.Reset();
+}
+
+template<typename T>
+inline void Computer<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
+{
+	ram.GetVDU(v);
 }

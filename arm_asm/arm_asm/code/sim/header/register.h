@@ -18,6 +18,8 @@ public:
 	typename T Get();
 	void Set(typename T v);
 
+	void Reset();
+
 private:
 	T value;
 };
@@ -49,4 +51,10 @@ template<typename T>
 inline void Register<T>::Set(typename T v)
 {
 	value = v;
+}
+
+template<typename T>
+inline void Register<T>::Reset()
+{
+	this->Set((T)0);
 }

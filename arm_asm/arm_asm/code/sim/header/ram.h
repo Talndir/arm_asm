@@ -30,7 +30,11 @@ public:
 
 	void Tick();
 	void Print();
+	void Reset();
+	
 	void PrintVDU();
+
+	void GetVDU(std::vector<std::vector<uint8_t>>& v);
 
 private:
 	std::vector<uint8_t> memory;
@@ -106,6 +110,12 @@ inline void RAM<T>::Print()
 	}
 }
 
+template<typename T>
+inline void RAM<T>::Reset()
+{
+	std::fill(memory.begin(), memory.end(), (uint8_t)0);
+}
+
 // Prints VDU to console (first 1024 memory locations)
 template<typename T>
 inline void RAM<T>::PrintVDU()
@@ -125,4 +135,21 @@ inline void RAM<T>::PrintVDU()
 	}
 
 	SetConsoleTextAttribute(hConsole, 15);
+}
+
+template<typename T>
+inline void RAM<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
+{
+	v.clear();
+
+	std::vector<uint8_t> r;
+
+	for (unsigned int i = 0; i < 16; ++i)
+	{
+		for (unsigned int j = 0; j < 16; ++j)
+			r.push_back(memory.at(i * 16 + j));
+
+		v.push_back(r);
+		r.clear();
+	}
 }

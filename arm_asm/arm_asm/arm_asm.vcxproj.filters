@@ -24,6 +24,15 @@
     <ClCompile Include="code\io\read.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\gui\source\app.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\gui\source\mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\gui\source\appproxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\sim\header\bus.h">
@@ -63,6 +72,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\io\io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\gui\header\app.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\gui\header\mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\gui\gui_include.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\gui\header\appproxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

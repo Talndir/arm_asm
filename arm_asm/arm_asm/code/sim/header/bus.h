@@ -20,6 +20,8 @@ public:
 	Bus();					// Constructor
 	virtual ~Bus() = 0;		// Virtual destructor to make class abstract
 
+	void Reset();
+
 	T Get();	// Public read, all components can read from a bus
 
 protected:
@@ -43,6 +45,12 @@ inline Bus<T>::Bus()
 template<typename T>
 Bus<T>::~Bus()
 {
+}
+
+template<typename T>
+inline void Bus<T>::Reset()
+{
+	this->Set((T)0);
 }
 
 // Read value on bus

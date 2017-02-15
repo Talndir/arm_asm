@@ -28,10 +28,10 @@ public:
 	
 	void Tick();
 	void Print();
+	void Reset();
 
 private:
 	std::vector<Register<T>> registers;
-
 };
 
 /* Function definitions */
@@ -93,4 +93,11 @@ inline void RegisterFile<T>::Print()
 {
 	for (unsigned int i = 0; i < registers.size(); ++i)
 		std::cout << "R" << i << ": " << std::hex << registers.at(i).Get() << std::endl;
+}
+
+template<typename T>
+inline void RegisterFile<T>::Reset()
+{
+	for (unsigned int i = 0; i < registers.size(); ++i)
+		registers.at(i).Reset();
 }

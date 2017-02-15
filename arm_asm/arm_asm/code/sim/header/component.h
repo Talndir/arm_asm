@@ -24,6 +24,7 @@ public:
 
 	virtual void Tick() = 0;
 	virtual void Print() = 0;
+	virtual void Reset() = 0;
 
 protected:
 	typename ControlBus<T>* controlBus;
