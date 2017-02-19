@@ -25,6 +25,7 @@ public:
 	virtual void Tick() = 0;
 	virtual void Print() = 0;
 	virtual void Reset() = 0;
+	virtual void GetData(std::vector<T>& v) = 0;
 
 protected:
 	typename ControlBus<T>* controlBus;

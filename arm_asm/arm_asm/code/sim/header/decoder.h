@@ -56,6 +56,7 @@ public:
 	void Tick();
 	void Print();
 	void Reset();
+	void GetData(std::vector<T>& v);
 
 private:
 	Register<uint32_t> cir;
@@ -391,4 +392,14 @@ inline void Decoder<T>::Reset()
 	pc.Set(0x1000);
 	temp.Set(0);
 	microcode.clear();
+}
+
+template<typename T>
+inline void Decoder<T>::GetData(std::vector<T>& v)
+{
+	v.push_back(pc.Get());
+	v.push_back((cir.Get() >> 0) & 0xFF);
+	v.push_back((cir.Get() >> 8) & 0xFF);
+	v.push_back((cir.Get() >> 16) & 0xFF);
+	v.push_back((cir.Get() >> 24) & 0xFF);
 }

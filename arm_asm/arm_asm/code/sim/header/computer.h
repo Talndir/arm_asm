@@ -25,11 +25,17 @@ public:
 
 	void Read(std::vector<uint32_t>& as);
 	void Run();
+	void RunSingle();
 	void Tick();
 
 	void Reset();
 
 	void GetVDU(std::vector<std::vector<uint8_t>>& v);
+
+	void GetRegisterFile(std::vector<T>& v);
+	void GetDecoder(std::vector<T>& v);
+	void GetRAM(std::vector<T>& v);
+	void GetALU(std::vector<T>& v);
 
 private:
 	ControlBus<T> controlBus;
@@ -97,6 +103,18 @@ inline void Computer<T>::Run()
 	registerFile.Print();
 }
 
+template<typename T>
+inline void Computer<T>::RunSingle()
+{
+	decoder.Fetch();
+
+	if (decoder.cir.Get())
+	{
+		decoder.Decode();
+		decoder.Execute();
+	}
+}
+
 // Tick all systems in computer at once
 template<typename T>
 inline void Computer<T>::Tick()
@@ -123,4 +141,28 @@ template<typename T>
 inline void Computer<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
 {
 	ram.GetVDU(v);
+}
+
+template<typename T>
+inline void Computer<T>::GetRegisterFile(std::vector<T>& v)
+{
+	registerFile.GetData(v);
+}
+
+template<typename T>
+inline void Computer<T>::GetDecoder(std::vector<T>& v)
+{
+	decoder.GetData(v);
+}
+
+template<typename T>
+inline void Computer<T>::GetRAM(std::vector<T>& v)
+{
+	ram.GetData(v);
+}
+
+template<typename T>
+inline void Computer<T>::GetALU(std::vector<T>& v)
+{
+	alu.GetData(v);
 }

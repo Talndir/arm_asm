@@ -28,6 +28,7 @@ public:
 	void Tick();
 	void Print();
 	void Reset();
+	void GetData(std::vector<T>& v);
 
 private:
 	Register<T> r0;
@@ -207,4 +208,12 @@ inline void ALU<T>::Reset()
 	r1.Set((T)0);
 	acc.Set((T)0);
 	sr.Set((T)0);
+}
+
+template<typename T>
+inline void ALU<T>::GetData(std::vector<T>& v)
+{
+	v.push_back(r0.Get());
+	v.push_back(r1.Get());
+	v.push_back(acc.Get());
 }

@@ -30,7 +30,10 @@
     <ClCompile Include="code\gui\source\mainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\gui\source\appproxy.cpp">
+    <ClCompile Include="code\io\matchlines.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\gui\source\ticktimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\gui\header\appproxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\gui\header\ticktimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

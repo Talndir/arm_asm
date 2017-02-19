@@ -29,6 +29,7 @@ public:
 	void Tick();
 	void Print();
 	void Reset();
+	void GetData(std::vector<T>& v);
 
 private:
 	std::vector<Register<T>> registers;
@@ -100,4 +101,11 @@ inline void RegisterFile<T>::Reset()
 {
 	for (unsigned int i = 0; i < registers.size(); ++i)
 		registers.at(i).Reset();
+}
+
+template<typename T>
+inline void RegisterFile<T>::GetData(std::vector<T>& v)
+{
+	for (unsigned int i = 0; i < registers.size(); ++i)
+		v.push_back(registers.at(i).Get());
 }

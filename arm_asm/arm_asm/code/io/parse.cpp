@@ -14,7 +14,7 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 
 		if (opcode.at(0) == ':')
 		{
-			jumps.insert(std::make_pair<std::string, int>(opcode.substr(1), (int)i));
+			jumps.insert(std::make_pair(opcode.substr(1), (int)i));
 			data.erase(data.begin() + i);
 			--i;
 		}

@@ -31,6 +31,7 @@ public:
 	void Tick();
 	void Print();
 	void Reset();
+	void GetData(std::vector<T>& v);
 	
 	void PrintVDU();
 
@@ -114,6 +115,13 @@ template<typename T>
 inline void RAM<T>::Reset()
 {
 	std::fill(memory.begin(), memory.end(), (uint8_t)0);
+}
+
+template<typename T>
+inline void RAM<T>::GetData(std::vector<T>& v)
+{
+	for (unsigned int i = 0; i < memory.size(); ++i)
+		v.push_back(memory.at(i));
 }
 
 // Prints VDU to console (first 1024 memory locations)
