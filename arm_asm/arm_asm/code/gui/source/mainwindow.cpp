@@ -128,6 +128,10 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 
 	wxMenu* menuProgram = new wxMenu;
 	menuProgram->Append(MENU_RUN, "Run");
+	menuProgram->Append(MENU_STEP_INSTRUCTION, "Step Instruction");
+	menuProgram->Append(MENU_STEP_MICRO, "Step Microcode");
+	menuProgram->Append(MENU_COMPILE, "Compile");
+	menuProgram->Append(MENU_HALT, "Halt");
 
 	wxMenuBar* menuBar = new wxMenuBar;
 	menuBar->Append(menuFile, "File");
@@ -146,7 +150,7 @@ void MainWindow::OnExit(wxCommandEvent & event)
 void MainWindow::OnRun(wxCommandEvent & event)
 {
 	state = PROGRAM_RUNNING;
-	parent->RunProgram();
+	parent->Update();
 	this->Update();
 }
 
@@ -170,6 +174,32 @@ void MainWindow::OnSave(wxCommandEvent & event)
 		text->SaveFile(d->GetPath());
 		SetTitle(d->GetFilename());
 	}
+}
+
+void MainWindow::OnStepInstruction(wxCommandEvent & event)
+{
+	state = PROGRAM_STEP_INSTRUCTION;
+	parent->Update();
+	this->Update();
+}
+
+void MainWindow::OnStepMicro(wxCommandEvent & event)
+{
+	state = PROGRAM_STEP_MICROCODE;
+	parent->Update();
+	this->Update();
+}
+
+void MainWindow::OnCompile(wxCommandEvent & event)
+{
+	state = PROGRAM_HALT;
+	parent->Compile();
+	this->Update();
+}
+
+void MainWindow::OnHalt(wxCommandEvent & event)
+{
+	state = PROGRAM_HALT;
 }
 
 void MainWindow::GetText(std::string& s)
@@ -271,4 +301,8 @@ EVT_MENU(wxID_EXIT, MainWindow::OnExit)
 EVT_MENU(MENU_RUN, MainWindow::OnRun)
 EVT_MENU(MENU_LOAD, MainWindow::OnLoad)
 EVT_MENU(MENU_SAVE, MainWindow::OnSave)
+EVT_MENU(MENU_STEP_INSTRUCTION, MainWindow::OnStepInstruction)
+EVT_MENU(MENU_STEP_MICRO, MainWindow::OnStepMicro)
+EVT_MENU(MENU_COMPILE, MainWindow::OnCompile)
+EVT_MENU(MENU_HALT, MainWindow::OnHalt)
 wxEND_EVENT_TABLE()

@@ -15,7 +15,7 @@ class App : public AppProxy
 public:
 	virtual bool OnInit();
 
-	virtual void RunProgram();
+	virtual void Compile();
 
 	virtual void GetVDU(std::vector<std::vector<uint8_t>>& v);
 	virtual void GetRegisterFile(std::vector<uint16_t>& v);
@@ -25,7 +25,8 @@ public:
 
 	virtual int GetLine();
 	
-	virtual void RunSingle();
+	void RunSingle();
+	void RunMicro();
 
 	virtual void Update();
 

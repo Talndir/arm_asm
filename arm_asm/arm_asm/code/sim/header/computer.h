@@ -26,6 +26,7 @@ public:
 	void Read(std::vector<uint32_t>& as);
 	void Run();
 	void RunSingle();
+	void RunMicro();
 	void Tick();
 
 	void Reset();
@@ -113,6 +114,12 @@ inline void Computer<T>::RunSingle()
 		decoder.Decode();
 		decoder.Execute();
 	}
+}
+
+template<typename T>
+inline void Computer<T>::RunMicro()
+{
+	decoder.RunSingle();
 }
 
 // Tick all systems in computer at once

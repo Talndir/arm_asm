@@ -44,6 +44,8 @@ public:
 	void Decode();
 	void Execute();
 
+	void RunSingle();
+
 	void GetRegister(int n);
 	void GetMemory(int n);
 	void StoreRegister(int n);
@@ -224,6 +226,25 @@ inline void Decoder<T>::Execute()
 		if (microcode.at(i).data != 0xFFFF) dataBus->Set(microcode.at(i).data);
 
 		computer->Tick();
+	}
+}
+
+template<typename T>
+inline void Decoder<T>::RunSingle()
+{
+	if (microcode.size())
+	{
+		if (microcode.at(0).control != 0xFFFF) controlBus->Set(microcode.at(0).control);
+		if (microcode.at(0).address != 0xFFFF) addressBus->Set(microcode.at(0).address);
+		if (microcode.at(0).data != 0xFFFF) dataBus->Set(microcode.at(0).data);
+
+		computer->Tick();
+		microcode.erase(microcode.begin());
+	}
+	else
+	{
+		Fetch();
+		Decode();
 	}
 }
 

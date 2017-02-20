@@ -22,7 +22,7 @@ bool App::OnInit()
 	return true;
 }
 
-void App::RunProgram()
+void App::Compile()
 {
 	std::vector<std::vector<std::string>> data, d2;
 	std::string s;
@@ -84,6 +84,12 @@ void App::RunSingle()
 	mainWindow->Update();
 }
 
+void App::RunMicro()
+{
+	computer.RunMicro();
+	mainWindow->Update();
+}
+
 void App::Update()
 {
 	timer->Start(mainWindow->GetSpeed());
@@ -94,7 +100,7 @@ void App::Update()
 		RunSingle();
 		break;
 	case PROGRAM_RESET:
-		RunProgram();
+		Compile();
 		RunSingle();
 		mainWindow->state = PROGRAM_RUNNING;
 		break;
@@ -103,6 +109,7 @@ void App::Update()
 		mainWindow->state = PROGRAM_HALT;
 		break;
 	case PROGRAM_STEP_MICROCODE:
+		RunMicro();
 		mainWindow->state = PROGRAM_HALT;
 		break;
 	default:

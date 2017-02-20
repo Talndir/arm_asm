@@ -13,6 +13,15 @@
 #include <iomanip>
 #include <sstream>
 
+enum Program
+{
+	PROGRAM_HALT = 0,
+	PROGRAM_RUNNING = 1,
+	PROGRAM_RESET = 2,
+	PROGRAM_STEP_INSTRUCTION = 3,
+	PROGRAM_STEP_MICROCODE = 4
+};
+
 class MainWindow : public wxFrame
 {
 public:
@@ -32,6 +41,10 @@ private:
 	void OnRun(wxCommandEvent& event);
 	void OnLoad(wxCommandEvent& event);
 	void OnSave(wxCommandEvent& event);
+	void OnStepInstruction(wxCommandEvent& event);
+	void OnStepMicro(wxCommandEvent& event);
+	void OnCompile(wxCommandEvent& event);
+	void OnHalt(wxCommandEvent& event);
 
 	wxStyledTextCtrl* text;
 	wxGrid* vdu;
@@ -54,14 +67,9 @@ enum Menu
 {
 	MENU_RUN = 0,
 	MENU_LOAD = 1,
-	MENU_SAVE = 2
-};
-
-enum Program
-{
-	PROGRAM_HALT = 0,
-	PROGRAM_RUNNING = 1,
-	PROGRAM_RESET = 2,
-	PROGRAM_STEP_INSTRUCTION = 3,
-	PROGRAM_STEP_MICROCODE = 4
+	MENU_SAVE = 2,
+	MENU_STEP_INSTRUCTION = 3,
+	MENU_STEP_MICRO = 4,
+	MENU_COMPILE = 5,
+	MENU_HALT = 6
 };
