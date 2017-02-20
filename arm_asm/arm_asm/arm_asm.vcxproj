@@ -81,6 +81,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7E098B0F-FF0A-4C98-BEB8-DCDD40E0FB10}</ProjectGuid>
     <RootNamespace>arm_asm</RootNamespace>

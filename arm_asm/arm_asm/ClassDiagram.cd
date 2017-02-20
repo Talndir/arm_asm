@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="App">
+    <Position X="11.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAgEAAAAIACAAAAAAAAAFFIAAAAQAABAAAAAAAEA=</HashCode>
+      <FileName>code\gui\header\app.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AppProxy">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAAEAAAAIACAAAAAAAAABAIAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>code\gui\header\appproxy.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Bus&lt;T&gt;">
+    <Position X="0.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAABABAAAAAAAAAIAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>code\sim\header\bus.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Component&lt;T&gt;">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAEAAABAAAAAAAAAAAAAAAgAIAAABAAAAEUAA=</HashCode>
+      <FileName>code\sim\header\component.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Computer&lt;T&gt;">
+    <Position X="9.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEIAAAKJCAAAAAAAAAlAIAAgBIAABAAAACAUQI=</HashCode>
+      <FileName>code\sim\header\computer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ControlBus&lt;T&gt;">
+    <Position X="5" Y="9.25" Width="1.5" />
+    <InheritanceLine Type="Bus&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="9.774" />
+        <Point X="2.375" Y="9.774" />
+        <Point X="2.375" Y="8.875" />
+        <Point X="5.75" Y="8.875" />
+        <Point X="5.75" Y="9.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>code\sim\header\controlbus.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataBus&lt;T&gt;">
+    <Position X="2.75" Y="9.25" Width="1.5" />
+    <InheritanceLine Type="Bus&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="9.162" />
+        <Point X="2.375" Y="9.162" />
+        <Point X="2.375" Y="8.875" />
+        <Point X="3.562" Y="8.875" />
+        <Point X="3.562" Y="9.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>code\sim\header\databus.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AddressBus&lt;T&gt;">
+    <Position X="7.25" Y="9.25" Width="1.5" />
+    <InheritanceLine Type="Bus&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="8.438" />
+        <Point X="2.375" Y="8.438" />
+        <Point X="2.375" Y="8.875" />
+        <Point X="8" Y="8.875" />
+        <Point X="8" Y="9.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>code\sim\header\addressbus.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ALU&lt;T&gt;">
+    <Position X="5" Y="1.75" Width="1.5" />
+    <InheritanceLine Type="Component&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="1.25" Y="0.5" />
+        <Point X="1.25" Y="0.26" />
+        <Point X="5.75" Y="0.26" />
+        <Point X="5.75" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAQACAEAAABAAAAAAAAAAgAEABAgAAIAAAAAEEQAA=</HashCode>
+      <FileName>code\sim\header\alu.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Decoder&lt;T&gt;">
+    <Position X="7.25" Y="1.75" Width="1.5" />
+    <InheritanceLine Type="Component&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="1.656" Y="0.5" />
+        <Point X="1.656" Y="0.26" />
+        <Point X="8" Y="0.26" />
+        <Point X="8" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ACgBAAAgEAAUBQQAACGAAAAQEQAAAACAABAAQAgEQAA=</HashCode>
+      <FileName>code\sim\header\decoder.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainWindow">
+    <Position X="13.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ECUAIIAAAAAEAERIAAAEAAACEAEUAgQMAAABAAAAEBE=</HashCode>
+      <FileName>code\gui\header\mainwindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RAM&lt;T&gt;">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <InheritanceLine Type="Component&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="0.844" Y="0.5" />
+        <Point X="0.844" Y="0.26" />
+        <Point X="3.5" Y="0.26" />
+        <Point X="3.5" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AACggAAAEAAABAAAAAAAAAABAAAAIAAAAAAAAQIEQAA=</HashCode>
+      <FileName>code\sim\header\ram.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Register&lt;T&gt;">
+    <Position X="5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAhABAAAAAAAAAAAABACAAAAAAAAAAAAA=</HashCode>
+      <FileName>code\sim\header\register.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RegisterFile&lt;T&gt;">
+    <Position X="9.5" Y="1.75" Width="1.5" />
+    <InheritanceLine Type="Component&lt;T&gt;" FixedToPoint="true">
+      <Path>
+        <Point X="1.859" Y="0.5" />
+        <Point X="1.859" Y="0.26" />
+        <Point X="10.25" Y="0.26" />
+        <Point X="10.25" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAACAAAEAAABAAAACAAAAAgAAAAAAAAAQAAAAEEQAA=</HashCode>
+      <FileName>code\sim\header\registerfile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TickTimer">
+    <Position X="15.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAABAAAAAAAAAAAAAAABAAAAAAQAAAAA=</HashCode>
+      <FileName>code\gui\header\ticktimer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="hsv">
+    <Position X="0.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYJAAAAAAAAA=</HashCode>
+      <FileName>code\gui\gui_include.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Instruction">
+    <Position X="7.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAIIAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>code\sim\header\instruction.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="rgb">
+    <Position X="2.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAIAQABAAAAAAA=</HashCode>
+      <FileName>code\gui\gui_include.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="markers">
+    <Position X="9.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>code\gui\source\mainwindow.cpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Menu">
+    <Position X="11.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAgAAAAAIAAAAACgAgAAAAQEAAAAAAAAAAAA=</HashCode>
+      <FileName>code\gui\header\mainwindow.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Program">
+    <Position X="13" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAQAgAAAAAQAAAAAQAAAAAACAAAAAA=</HashCode>
+      <FileName>code\gui\header\mainwindow.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="textMargins">
+    <Position X="14.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>code\gui\source\mainwindow.cpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

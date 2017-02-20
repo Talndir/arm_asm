@@ -112,6 +112,9 @@ void App::Update()
 		RunMicro();
 		mainWindow->state = PROGRAM_HALT;
 		break;
+	case PROGRAM_RUN_MICROCODE:
+		RunMicro();
+		break;
 	default:
 		break;
 	}

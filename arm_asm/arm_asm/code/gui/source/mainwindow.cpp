@@ -129,9 +129,10 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	wxMenu* menuProgram = new wxMenu;
 	menuProgram->Append(MENU_RUN, "Run");
 	menuProgram->Append(MENU_STEP_INSTRUCTION, "Step Instruction");
-	menuProgram->Append(MENU_STEP_MICRO, "Step Microcode");
+	menuProgram->Append(MENU_STEP_MICROCODE, "Step Microcode");
 	menuProgram->Append(MENU_COMPILE, "Compile");
 	menuProgram->Append(MENU_HALT, "Halt");
+	menuProgram->Append(MENU_RUN_MICROCODE, "Run Microcode");
 
 	wxMenuBar* menuBar = new wxMenuBar;
 	menuBar->Append(menuFile, "File");
@@ -200,6 +201,11 @@ void MainWindow::OnCompile(wxCommandEvent & event)
 void MainWindow::OnHalt(wxCommandEvent & event)
 {
 	state = PROGRAM_HALT;
+}
+
+void MainWindow::OnRunMicrocode(wxCommandEvent & event)
+{
+	state = PROGRAM_RUN_MICROCODE;
 }
 
 void MainWindow::GetText(std::string& s)
@@ -302,7 +308,8 @@ EVT_MENU(MENU_RUN, MainWindow::OnRun)
 EVT_MENU(MENU_LOAD, MainWindow::OnLoad)
 EVT_MENU(MENU_SAVE, MainWindow::OnSave)
 EVT_MENU(MENU_STEP_INSTRUCTION, MainWindow::OnStepInstruction)
-EVT_MENU(MENU_STEP_MICRO, MainWindow::OnStepMicro)
+EVT_MENU(MENU_STEP_MICROCODE, MainWindow::OnStepMicro)
 EVT_MENU(MENU_COMPILE, MainWindow::OnCompile)
 EVT_MENU(MENU_HALT, MainWindow::OnHalt)
+EVT_MENU(MENU_RUN_MICROCODE, MainWindow::OnRunMicrocode)
 wxEND_EVENT_TABLE()

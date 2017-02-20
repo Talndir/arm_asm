@@ -19,7 +19,8 @@ enum Program
 	PROGRAM_RUNNING = 1,
 	PROGRAM_RESET = 2,
 	PROGRAM_STEP_INSTRUCTION = 3,
-	PROGRAM_STEP_MICROCODE = 4
+	PROGRAM_STEP_MICROCODE = 4,
+	PROGRAM_RUN_MICROCODE = 5
 };
 
 class MainWindow : public wxFrame
@@ -45,6 +46,7 @@ private:
 	void OnStepMicro(wxCommandEvent& event);
 	void OnCompile(wxCommandEvent& event);
 	void OnHalt(wxCommandEvent& event);
+	void OnRunMicrocode(wxCommandEvent& event);
 
 	wxStyledTextCtrl* text;
 	wxGrid* vdu;
@@ -69,7 +71,8 @@ enum Menu
 	MENU_LOAD = 1,
 	MENU_SAVE = 2,
 	MENU_STEP_INSTRUCTION = 3,
-	MENU_STEP_MICRO = 4,
+	MENU_STEP_MICROCODE = 4,
 	MENU_COMPILE = 5,
-	MENU_HALT = 6
+	MENU_HALT = 6,
+	MENU_RUN_MICROCODE = 7
 };
