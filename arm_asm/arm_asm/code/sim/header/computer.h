@@ -37,6 +37,7 @@ public:
 	void GetDecoder(std::vector<T>& v);
 	void GetRAM(std::vector<T>& v);
 	void GetALU(std::vector<T>& v);
+	void GetBuses(std::vector<T>& v);
 
 private:
 	ControlBus<T> controlBus;
@@ -172,4 +173,12 @@ template<typename T>
 inline void Computer<T>::GetALU(std::vector<T>& v)
 {
 	alu.GetData(v);
+}
+
+template<typename T>
+inline void Computer<T>::GetBuses(std::vector<T>& v)
+{
+	v.push_back(controlBus.Get());
+	v.push_back(addressBus.Get());
+	v.push_back(dataBus.Get());
 }

@@ -23,6 +23,41 @@ enum Program
 	PROGRAM_RUN_MICROCODE = 5
 };
 
+struct anim
+{
+	std::vector<wxPoint> points;
+	int index;
+	float x;
+	float speed;
+	int source, destination;
+
+	wxPoint Lerp()
+	{
+		if (index != points.size() - 1)
+			return x * (points.at(index + 1) - points.at(index)) + points.at(index);
+		else
+			return points.at(index);
+	}
+
+	bool Update()
+	{
+		if (index != points.size() - 1)
+		{
+			x += speed / std::sqrt(std::pow(points.at(index + 1).x - points.at(index).x, 2) + std::pow(points.at(index + 1).y - points.at(index).y, 2));
+
+			if (x >= 1.0)
+			{
+				x -= 1.0;
+				index = std::min(index + 1, (int)points.size() - 1);
+			}
+
+			return true;
+		}
+		else
+			return false;
+	}
+};
+
 class MainWindow : public wxFrame
 {
 public:
@@ -31,7 +66,7 @@ public:
 	void GetText(std::string& s);
 	int GetSpeed();
 
-	void Update();
+	void UpdateLogic();
 
 	int state = PROGRAM_HALT;
 
@@ -48,6 +83,9 @@ private:
 	void OnHalt(wxCommandEvent& event);
 	void OnRunMicrocode(wxCommandEvent& event);
 
+	void OnPaint(wxPaintEvent& event);
+	void OnAnimTimer(wxTimerEvent& event);
+
 	wxStyledTextCtrl* text;
 	wxGrid* vdu;
 	std::vector<wxTextCtrl*> registerBoxes;
@@ -59,6 +97,12 @@ private:
 	std::vector<wxTextCtrl*> alu_texts;
 	std::vector<wxTextCtrl*> regfile_texts;
 	std::vector<wxTextCtrl*> decoder_texts;
+	std::vector<wxTextCtrl*> bus_texts;
+
+	wxTimer animTimer;
+
+	anim cAnim, aAnim, dAnim;
+	std::vector<wxPoint> cNodes, aNodes, dNodes;
 
 	int currentLineMarker;
 
@@ -75,4 +119,12 @@ enum Menu
 	MENU_COMPILE = 5,
 	MENU_HALT = 6,
 	MENU_RUN_MICROCODE = 7
+};
+
+enum Components
+{
+	COMPONENT_DECODER = 0,
+	COMPONENT_ALU = 1,
+	COMPONENT_REGFILE = 2,
+	COMPONENT_RAM = 3
 };

@@ -6,7 +6,7 @@ TickTimer::TickTimer(AppProxy * proxy) : parent(proxy)
 
 void TickTimer::Notify()
 {
-	parent->Update();
+	parent->UpdateLogic();
 }
 
 void TickTimer::Start(int t)

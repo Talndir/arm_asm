@@ -11,8 +11,9 @@ public:
 	virtual void GetDecoder(std::vector<uint16_t>& v) = 0;
 	virtual void GetRAM(std::vector<uint16_t>& v) = 0;
 	virtual void GetALU(std::vector<uint16_t>& v) = 0;
+	virtual void GetBuses(std::vector<uint16_t>& v) = 0;
 
 	virtual int GetLine() = 0;
 
-	virtual void Update() = 0;
+	virtual void UpdateLogic() = 0;
 };

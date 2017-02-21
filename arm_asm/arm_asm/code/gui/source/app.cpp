@@ -66,6 +66,11 @@ void App::GetALU(std::vector<uint16_t>& v)
 	computer.GetALU(v);
 }
 
+void App::GetBuses(std::vector<uint16_t>& v)
+{
+	computer.GetBuses(v);
+}
+
 int App::GetLine()
 {
 	std::vector<uint16_t> v;
@@ -81,16 +86,16 @@ int App::GetLine()
 void App::RunSingle()
 {
 	computer.RunSingle();
-	mainWindow->Update();
+	mainWindow->UpdateLogic();
 }
 
 void App::RunMicro()
 {
 	computer.RunMicro();
-	mainWindow->Update();
+	mainWindow->UpdateLogic();
 }
 
-void App::Update()
+void App::UpdateLogic()
 {
 	timer->Start(mainWindow->GetSpeed());
 

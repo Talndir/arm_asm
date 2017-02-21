@@ -22,13 +22,14 @@ public:
 	virtual void GetDecoder(std::vector<uint16_t>& v);
 	virtual void GetRAM(std::vector<uint16_t>& v);
 	virtual void GetALU(std::vector<uint16_t>& v);
+	virtual void GetBuses(std::vector<uint16_t>& v);
 
 	virtual int GetLine();
 	
 	void RunSingle();
 	void RunMicro();
 
-	virtual void Update();
+	virtual void UpdateLogic();
 
 private:
 	MainWindow* mainWindow;

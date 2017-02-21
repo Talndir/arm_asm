@@ -139,8 +139,40 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	menuBar->Append(menuProgram, "Program");
 	SetMenuBar(menuBar);
 
+	// Anim timer
+	animTimer.SetOwner(this, wxID_ANY);
+	this->Connect(animTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(MainWindow::OnAnimTimer), NULL, this);
+	animTimer.Start(50);
+
+	cNodes.push_back(wxPoint(100, 500));
+	cNodes.push_back(wxPoint(400, 500));
+	cNodes.push_back(wxPoint(200, 500));
+	cNodes.push_back(wxPoint(200, 200));
+	cNodes.push_back(wxPoint(100, 200));
+	cNodes.push_back(wxPoint(400, 200));
+
+	aNodes.push_back(wxPoint(100, 550));
+	aNodes.push_back(wxPoint(400, 550));
+	aNodes.push_back(wxPoint(250, 550));
+	aNodes.push_back(wxPoint(250, 150));
+	aNodes.push_back(wxPoint(100, 150));
+	aNodes.push_back(wxPoint(400, 150));
+
+	dNodes.push_back(wxPoint(100, 600));
+	dNodes.push_back(wxPoint(400, 600));
+	dNodes.push_back(wxPoint(300, 600));
+	dNodes.push_back(wxPoint(300, 100));
+	dNodes.push_back(wxPoint(100, 100));
+	dNodes.push_back(wxPoint(400, 100));
+
+	cAnim.speed = aAnim.speed = dAnim.speed = 5.0;
+
+	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
+	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
+	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
+
 	// Update
-	this->Update();
+	this->UpdateLogic();
 }
 
 void MainWindow::OnExit(wxCommandEvent & event)
@@ -151,8 +183,7 @@ void MainWindow::OnExit(wxCommandEvent & event)
 void MainWindow::OnRun(wxCommandEvent & event)
 {
 	state = PROGRAM_RUNNING;
-	parent->Update();
-	this->Update();
+	parent->UpdateLogic();
 }
 
 void MainWindow::OnLoad(wxCommandEvent & event)
@@ -180,22 +211,22 @@ void MainWindow::OnSave(wxCommandEvent & event)
 void MainWindow::OnStepInstruction(wxCommandEvent & event)
 {
 	state = PROGRAM_STEP_INSTRUCTION;
-	parent->Update();
-	this->Update();
+	parent->UpdateLogic();
+	//this->UpdateLogic();
 }
 
 void MainWindow::OnStepMicro(wxCommandEvent & event)
 {
 	state = PROGRAM_STEP_MICROCODE;
-	parent->Update();
-	this->Update();
+	parent->UpdateLogic();
+	//this->UpdateLogic();
 }
 
 void MainWindow::OnCompile(wxCommandEvent & event)
 {
 	state = PROGRAM_HALT;
 	parent->Compile();
-	this->Update();
+	this->UpdateLogic();
 }
 
 void MainWindow::OnHalt(wxCommandEvent & event)
@@ -208,6 +239,43 @@ void MainWindow::OnRunMicrocode(wxCommandEvent & event)
 	state = PROGRAM_RUN_MICROCODE;
 }
 
+void MainWindow::OnPaint(wxPaintEvent & event)
+{
+	wxPaintDC dc(this);
+	
+	for (unsigned int i = 0; i < cNodes.size() - 1; ++i)
+	{
+		dc.DrawLine(cNodes.at(i), cNodes.at(i + 1));
+		dc.DrawLine(aNodes.at(i), aNodes.at(i + 1));
+		dc.DrawLine(dNodes.at(i), dNodes.at(i + 1));
+	}
+
+	wxRect r;
+	wxPoint offset(60, 15);
+
+	r.SetTopLeft(cAnim.Lerp() - offset);
+	r.SetBottomRight(cAnim.Lerp() + offset);
+	dc.DrawLabel(bus_texts.at(0)->GetValue(), r);
+	cAnim.Update();
+
+	r.SetTopLeft(aAnim.Lerp() - offset);
+	r.SetBottomRight(aAnim.Lerp() + offset);
+	dc.DrawLabel(bus_texts.at(1)->GetValue(), r);
+	aAnim.Update();
+
+	r.SetTopLeft(dAnim.Lerp() - offset);
+	r.SetBottomRight(dAnim.Lerp() + offset);
+	dc.DrawLabel(bus_texts.at(2)->GetValue(), r);
+	dAnim.Update();
+	
+	//dc.DrawCircle(rand() % 200, rand() % 200, 20);
+}
+
+void MainWindow::OnAnimTimer(wxTimerEvent & event)
+{
+	Refresh();
+}
+
 void MainWindow::GetText(std::string& s)
 {
 	s = text->GetText();
@@ -218,7 +286,7 @@ int MainWindow::GetSpeed()
 	return speedSlider->GetValue();
 }
 
-void MainWindow::Update()
+void MainWindow::UpdateLogic()
 {
 	{
 		std::vector<std::vector<uint8_t>> v;
@@ -293,13 +361,180 @@ void MainWindow::Update()
 	}
 
 	{
+		std::vector<uint16_t> v;
+		parent->GetBuses(v);
+
+		std::stringstream c, a, d;
+		c << "CTRL: " << std::setw(4) << std::setfill('0') << std::hex << v.at(0);
+		a << "ADDR: " << std::setw(4) << std::setfill('0') << std::hex << v.at(1);
+		d << "DATA: " << std::setw(4) << std::setfill('0') << std::hex << v.at(2);
+
+		if (bus_texts.at(0)->GetValue() == c.str())
+			cAnim.source = cAnim.destination;
+		else
+		{
+			bus_texts.at(0)->ChangeValue(c.str());
+			cAnim.source = COMPONENT_DECODER;
+		}
+
+		if (bus_texts.at(1)->GetValue() == a.str())
+			aAnim.source = aAnim.destination;
+		else
+		{
+			bus_texts.at(1)->ChangeValue(a.str());
+			aAnim.source = COMPONENT_DECODER;
+		}
+
+		if (bus_texts.at(2)->GetValue() == d.str())
+			dAnim.source = dAnim.destination;
+		else
+		{
+			bus_texts.at(2)->ChangeValue(d.str());
+			dAnim.source = COMPONENT_DECODER;
+		}
+
+		switch ((v.at(0) & 0x0F00) >> 8)
+		{
+		case 1:
+			cAnim.destination = aAnim.destination = dAnim.destination = COMPONENT_ALU;
+			break;
+		case 2:
+			cAnim.destination = aAnim.destination = dAnim.destination = COMPONENT_REGFILE;
+			break;
+		case 4:
+			cAnim.destination = aAnim.destination = dAnim.destination = COMPONENT_RAM;
+			break;
+		case 8:
+			cAnim.destination = aAnim.destination = dAnim.destination = COMPONENT_DECODER;
+			break;
+		}
+
+		anim* anim = &cAnim;
+		std::vector<wxPoint>* nodes = &cNodes;
+
+		for (unsigned int i = 0; i < 3; ++i)
+		{
+			if (i == 0) { anim = &cAnim; nodes = &cNodes; }
+			else if (i == 1) { anim = &aAnim; nodes = &aNodes; }
+			else if (i == 2) { anim = &dAnim; nodes = &dNodes; }
+
+			anim->points.clear();
+			anim->index = 0;
+			anim->x = 0.0;
+
+			switch (anim->source)
+			{
+			case COMPONENT_DECODER:
+
+				anim->points.push_back(nodes->at(0));
+
+				switch (anim->destination)
+				{
+				case COMPONENT_DECODER:
+					break;
+				case COMPONENT_RAM:
+					anim->points.push_back(nodes->at(1));
+					break;
+				case COMPONENT_ALU:
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(4));
+					break;
+				case COMPONENT_REGFILE:
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(5));
+					break;
+				}
+
+				break;
+
+			case COMPONENT_ALU:
+
+				anim->points.push_back(nodes->at(4));
+
+				switch (anim->destination)
+				{
+				case COMPONENT_ALU:
+					break;
+				case COMPONENT_REGFILE:
+					anim->points.push_back(nodes->at(5));
+					break;
+				case COMPONENT_DECODER:
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(0));
+					break;
+				case COMPONENT_RAM:
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(1));
+					break;
+				}
+
+				break;
+
+			case COMPONENT_REGFILE:
+
+				anim->points.push_back(nodes->at(5));
+
+				switch (anim->destination)
+				{
+				case COMPONENT_REGFILE:
+					break;
+				case COMPONENT_ALU:
+					anim->points.push_back(nodes->at(4));
+					break;
+				case COMPONENT_DECODER:
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(0));
+					break;
+				case COMPONENT_RAM:
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(1));
+					break;
+				}
+
+				break;
+
+			case COMPONENT_RAM:
+
+				anim->points.push_back(nodes->at(1));
+
+				switch (anim->destination)
+				{
+				case COMPONENT_RAM:
+					break;
+				case COMPONENT_DECODER:
+					anim->points.push_back(nodes->at(0));
+					break;
+				case COMPONENT_ALU:
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(4));
+					break;
+				case COMPONENT_REGFILE:
+					anim->points.push_back(nodes->at(2));
+					anim->points.push_back(nodes->at(3));
+					anim->points.push_back(nodes->at(5));
+					break;
+				}
+
+				break;
+			}
+		}
+	}
+
+	{
 		int line = parent->GetLine();
 
 		text->MarkerDeleteHandle(currentLineMarker);
 		currentLineMarker = text->MarkerAdd(line, MARKER_CURRENT_LINE);
 	}
 
-	this->Refresh();
+	//this->Refresh();
 }
 
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
@@ -312,4 +547,5 @@ EVT_MENU(MENU_STEP_MICROCODE, MainWindow::OnStepMicro)
 EVT_MENU(MENU_COMPILE, MainWindow::OnCompile)
 EVT_MENU(MENU_HALT, MainWindow::OnHalt)
 EVT_MENU(MENU_RUN_MICROCODE, MainWindow::OnRunMicrocode)
+EVT_PAINT(MainWindow::OnPaint)
 wxEND_EVENT_TABLE()
