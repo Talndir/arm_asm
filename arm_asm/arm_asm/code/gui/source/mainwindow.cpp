@@ -154,6 +154,8 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	animTimer.SetOwner(this, wxID_ANY);
 	this->Connect(animTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(MainWindow::OnAnimTimer), NULL, this);
 	animTimer.Start(50);
+	pauseTimer.SetOwner(this, wxID_ANY);
+	this->Connect(pauseTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(MainWindow::OnPauseTimer), NULL, this);
 
 	cNodes.push_back(wxPoint(200, 450));
 	cNodes.push_back(wxPoint(500, 450));
@@ -187,6 +189,7 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	bus_texts.at(2)->Hide();
 
 	// Update
+	state = PROGRAM_HALT;
 	this->UpdateLogic();
 }
 
@@ -227,14 +230,12 @@ void MainWindow::OnStepInstruction(wxCommandEvent & event)
 {
 	state = PROGRAM_STEP_INSTRUCTION;
 	parent->UpdateLogic();
-	//this->UpdateLogic();
 }
 
 void MainWindow::OnStepMicro(wxCommandEvent & event)
 {
 	state = PROGRAM_STEP_MICROCODE;
 	parent->UpdateLogic();
-	//this->UpdateLogic();
 }
 
 void MainWindow::OnCompile(wxCommandEvent & event)
@@ -268,28 +269,41 @@ void MainWindow::OnPaint(wxPaintEvent & event)
 	wxRect r;
 	wxPoint offset = wxPoint(bus_texts.at(0)->GetSize().x, bus_texts.at(0)->GetSize().y) / 2;
 
-	r.SetTopLeft(cAnim.Lerp() - offset);
-	r.SetBottomRight(cAnim.Lerp() + offset);
-	dc.DrawLabel(bus_texts.at(0)->GetValue(), r);
-	cAnim.Update();
+	if ((state == PROGRAM_PAUSE_MICROCODE) || (state == PROGRAM_RUN_MICROCODE))
+	{
+		r.SetTopLeft(cAnim.Lerp() - offset);
+		r.SetBottomRight(cAnim.Lerp() + offset);
+		dc.DrawLabel(bus_texts.at(0)->GetValue(), r);
 
-	r.SetTopLeft(aAnim.Lerp() - offset);
-	r.SetBottomRight(aAnim.Lerp() + offset);
-	dc.DrawLabel(bus_texts.at(1)->GetValue(), r);
-	aAnim.Update();
+		r.SetTopLeft(aAnim.Lerp() - offset);
+		r.SetBottomRight(aAnim.Lerp() + offset);
+		dc.DrawLabel(bus_texts.at(1)->GetValue(), r);
 
-	r.SetTopLeft(dAnim.Lerp() - offset);
-	r.SetBottomRight(dAnim.Lerp() + offset);
-	dc.DrawLabel(bus_texts.at(2)->GetValue(), r);
-	dAnim.Update();
-	
-	//dc.DrawCircle(rand() % 200, rand() % 200, 20);
+		r.SetTopLeft(dAnim.Lerp() - offset);
+		r.SetBottomRight(dAnim.Lerp() + offset);
+		dc.DrawLabel(bus_texts.at(2)->GetValue(), r);
+	}
+
+	if (state == PROGRAM_PAUSE_MICROCODE)
+	{
+		cAnim.Update();
+		aAnim.Update();
+		dAnim.Update();
+	}
+
+	if ((cAnim.index == cAnim.points.size() - 1) && (aAnim.index == aAnim.points.size() - 1) && (dAnim.index == dAnim.points.size() - 1) && (!pauseTimer.IsRunning()) && (state == PROGRAM_PAUSE_MICROCODE))
+		pauseTimer.StartOnce(5000 / animSpeedSlider->GetValue());
 }
 
 void MainWindow::OnAnimTimer(wxTimerEvent & event)
 {
 	cAnim.speed = aAnim.speed = dAnim.speed = animSpeedSlider->GetValue();
 	Refresh();
+}
+
+void MainWindow::OnPauseTimer(wxTimerEvent & event)
+{
+	state = PROGRAM_RUN_MICROCODE;
 }
 
 void MainWindow::GetText(std::string& s)

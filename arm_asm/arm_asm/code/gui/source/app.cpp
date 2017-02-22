@@ -127,6 +127,7 @@ void App::UpdateLogic()
 		break;
 	case PROGRAM_RUN_MICROCODE:
 		RunMicro(mainWindow->cChanged, mainWindow->aChanged, mainWindow->dChanged);
+		mainWindow->state = PROGRAM_PAUSE_MICROCODE;
 		break;
 	default:
 		break;

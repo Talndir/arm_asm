@@ -20,7 +20,8 @@ enum Program
 	PROGRAM_RESET = 2,
 	PROGRAM_STEP_INSTRUCTION = 3,
 	PROGRAM_STEP_MICROCODE = 4,
-	PROGRAM_RUN_MICROCODE = 5
+	PROGRAM_RUN_MICROCODE = 5,
+	PROGRAM_PAUSE_MICROCODE = 6
 };
 
 struct anim
@@ -68,7 +69,7 @@ public:
 
 	void UpdateLogic();
 
-	int state = PROGRAM_HALT;
+	int state;
 	bool cChanged, aChanged, dChanged;
 
 private:
@@ -86,6 +87,7 @@ private:
 
 	void OnPaint(wxPaintEvent& event);
 	void OnAnimTimer(wxTimerEvent& event);
+	void OnPauseTimer(wxTimerEvent& event);
 
 	wxStyledTextCtrl* text;
 	wxGrid* vdu;
@@ -101,7 +103,7 @@ private:
 	std::vector<wxTextCtrl*> decoder_texts;
 	std::vector<wxTextCtrl*> bus_texts;
 
-	wxTimer animTimer;
+	wxTimer animTimer, pauseTimer;
 
 	anim cAnim, aAnim, dAnim;
 	std::vector<wxPoint> cNodes, aNodes, dNodes;
