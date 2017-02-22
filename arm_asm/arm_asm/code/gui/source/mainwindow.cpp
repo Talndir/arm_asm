@@ -18,49 +18,57 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	// Anim sizer
 	wxGridBagSizer* animSizer = new wxGridBagSizer;
 
+	wxPanel* aluPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
 	wxGridBagSizer* aluSizer = new wxGridBagSizer;
-	wxStaticText* alu_label = new wxStaticText(this, wxID_ANY, wxT("ALU"));
+	wxStaticText* alu_label = new wxStaticText(aluPanel, wxID_ANY, wxT("ALU"));
 	aluSizer->Add(alu_label, wxGBPosition(0, 0));
-	alu_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
-	alu_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
-	alu_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
+	alu_texts.push_back(new wxTextCtrl(aluPanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
+	alu_texts.push_back(new wxTextCtrl(aluPanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
+	alu_texts.push_back(new wxTextCtrl(aluPanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
 	aluSizer->Add(alu_texts.at(0), wxGBPosition(1, 0));
 	aluSizer->Add(alu_texts.at(1), wxGBPosition(1, 1));
 	aluSizer->Add(alu_texts.at(2), wxGBPosition(2, 0));
+	aluPanel->SetSizer(aluSizer);
 
+	wxPanel* regfilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(320, 200));
 	wxGridBagSizer* regfileSizer = new wxGridBagSizer;
-	wxStaticText* regfile_label = new wxStaticText(this, wxID_ANY, wxT("Register File"));
+	wxStaticText* regfile_label = new wxStaticText(regfilePanel, wxID_ANY, wxT("Register File"));
 	regfileSizer->Add(regfile_label, wxGBPosition(0, 0));
 	for (unsigned int i = 0; i < 4; ++i)
 	{
 		for (unsigned int j = 0; j < 4; ++j)
 		{
-			regfile_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
+			regfile_texts.push_back(new wxTextCtrl(regfilePanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
 			regfileSizer->Add(regfile_texts.at(i * 4 + j), wxGBPosition(i + 1, j));
 		}
 	}
+	regfilePanel->SetSizer(regfileSizer);
 
+	wxPanel* decoderPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
 	wxGridBagSizer* decoderSizer = new wxGridBagSizer;
-	wxStaticText* decoder_label = new wxStaticText(this, wxID_ANY, wxT("Decoder"));
+	wxStaticText* decoder_label = new wxStaticText(decoderPanel, wxID_ANY, wxT("Decoder"));
 	decoderSizer->Add(decoder_label, wxGBPosition(0, 0));
-	decoder_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
-	decoder_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(200, 30), wxTE_READONLY));
+	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
+	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(200, 30), wxTE_READONLY));
 	decoderSizer->Add(decoder_texts.at(0), wxGBPosition(1, 0));
 	decoderSizer->Add(decoder_texts.at(1), wxGBPosition(2, 0));
+	decoderPanel->SetSizer(decoderSizer);
 
+	wxPanel* ramPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
 	wxGridBagSizer* ramSizer = new wxGridBagSizer;
-	wxStaticText* ram_label = new wxStaticText(this, wxID_ANY, wxT("RAM"));
+	wxStaticText* ram_label = new wxStaticText(ramPanel, wxID_ANY, wxT("RAM"));
 	ramSizer->Add(ram_label, wxGBPosition(0, 0));
+	ramPanel->SetSizer(ramSizer);
 
 	animSpeedSlider = new wxSlider(this, wxID_ANY, 5, 1, 60, wxPoint(0, 0), wxSize(200, 60), wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
-	animSizer->Add(aluSizer, wxGBPosition(0, 0));
-	animSizer->Add(regfileSizer, wxGBPosition(0, 2));
-	animSizer->Add(decoderSizer, wxGBPosition(2, 0));
-	animSizer->Add(ramSizer, wxGBPosition(2, 2));
+	animSizer->Add(aluPanel, wxGBPosition(0, 0));
+	animSizer->Add(regfilePanel, wxGBPosition(0, 2));
+	animSizer->Add(decoderPanel, wxGBPosition(2, 0));
+	animSizer->Add(ramPanel, wxGBPosition(2, 2));
 	animSizer->Add(animSpeedSlider, wxGBPosition(3, 1));
-	animSizer->Add(150, 150, wxGBPosition(0, 1));
-	animSizer->Add(150, 150, wxGBPosition(1, 0));
+	animSizer->Add(300, 200, wxGBPosition(0, 1));
+	animSizer->Add(200, 200, wxGBPosition(1, 0));
 
 	// Text editor
 	text = new wxStyledTextCtrl(this, wxID_ANY, wxPoint(), wxSize(250, 720));
@@ -147,32 +155,32 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	this->Connect(animTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(MainWindow::OnAnimTimer), NULL, this);
 	animTimer.Start(50);
 
-	cNodes.push_back(wxPoint(100, 500));
-	cNodes.push_back(wxPoint(400, 500));
-	cNodes.push_back(wxPoint(200, 500));
-	cNodes.push_back(wxPoint(200, 200));
-	cNodes.push_back(wxPoint(100, 200));
-	cNodes.push_back(wxPoint(400, 200));
+	cNodes.push_back(wxPoint(200, 450));
+	cNodes.push_back(wxPoint(500, 450));
+	cNodes.push_back(wxPoint(300, 450));
+	cNodes.push_back(wxPoint(300, 150));
+	cNodes.push_back(wxPoint(200, 150));
+	cNodes.push_back(wxPoint(500, 150));
 
-	aNodes.push_back(wxPoint(100, 550));
-	aNodes.push_back(wxPoint(400, 550));
-	aNodes.push_back(wxPoint(250, 550));
-	aNodes.push_back(wxPoint(250, 150));
-	aNodes.push_back(wxPoint(100, 150));
-	aNodes.push_back(wxPoint(400, 150));
+	aNodes.push_back(wxPoint(200, 500));
+	aNodes.push_back(wxPoint(500, 500));
+	aNodes.push_back(wxPoint(350, 500));
+	aNodes.push_back(wxPoint(350, 100));
+	aNodes.push_back(wxPoint(200, 100));
+	aNodes.push_back(wxPoint(500, 100));
 
-	dNodes.push_back(wxPoint(100, 600));
-	dNodes.push_back(wxPoint(400, 600));
-	dNodes.push_back(wxPoint(300, 600));
-	dNodes.push_back(wxPoint(300, 100));
-	dNodes.push_back(wxPoint(100, 100));
-	dNodes.push_back(wxPoint(400, 100));
+	dNodes.push_back(wxPoint(200, 550));
+	dNodes.push_back(wxPoint(500, 550));
+	dNodes.push_back(wxPoint(400, 550));
+	dNodes.push_back(wxPoint(400, 50));
+	dNodes.push_back(wxPoint(200, 50));
+	dNodes.push_back(wxPoint(500, 50));
 
 	cAnim.speed = aAnim.speed = dAnim.speed = animSpeedSlider->GetValue();
 
-	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
-	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
-	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
+	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(40, 20), wxTE_READONLY));
+	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(40, 20), wxTE_READONLY));
+	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(40, 20), wxTE_READONLY));
 
 	bus_texts.at(0)->Hide();
 	bus_texts.at(1)->Hide();
@@ -258,7 +266,7 @@ void MainWindow::OnPaint(wxPaintEvent & event)
 	}
 
 	wxRect r;
-	wxPoint offset(60, 15);
+	wxPoint offset = wxPoint(bus_texts.at(0)->GetSize().x, bus_texts.at(0)->GetSize().y) / 2;
 
 	r.SetTopLeft(cAnim.Lerp() - offset);
 	r.SetBottomRight(cAnim.Lerp() + offset);
@@ -373,9 +381,9 @@ void MainWindow::UpdateLogic()
 		parent->GetBuses(v);
 
 		std::stringstream c, a, d;
-		c << "CTRL: " << std::setw(4) << std::setfill('0') << std::hex << v.at(0);
-		a << "ADDR: " << std::setw(4) << std::setfill('0') << std::hex << v.at(1);
-		d << "DATA: " << std::setw(4) << std::setfill('0') << std::hex << v.at(2);
+		c << /*"CTRL: " <<*/ std::setw(4) << std::setfill('0') << std::hex << v.at(0);
+		a << /*"ADDR: " <<*/ std::setw(4) << std::setfill('0') << std::hex << v.at(1);
+		d << /*"DATA: " <<*/ std::setw(4) << std::setfill('0') << std::hex << v.at(2);
 
 		if (!cChanged)
 			cAnim.source = cAnim.destination;
