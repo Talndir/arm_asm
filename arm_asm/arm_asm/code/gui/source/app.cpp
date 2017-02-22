@@ -76,7 +76,7 @@ int App::GetLine()
 	std::vector<uint16_t> v;
 	computer.GetDecoder(v);
 
-	std::map<int, int>::iterator it = memoryToLine.find(v.at(0));
+	std::map<int, int>::iterator it = memoryToLine.find(v.at(0) - 4);
 	if (it != memoryToLine.end())
 		return it->second;
 	else
@@ -89,10 +89,18 @@ void App::RunSingle()
 	mainWindow->UpdateLogic();
 }
 
-void App::RunMicro()
+void App::RunMicro(bool& c, bool& a, bool &d)
 {
-	computer.RunMicro();
+	bool again;
+
+	computer.RunMicro(c, a, d, again);
 	mainWindow->UpdateLogic();
+
+	if (again)
+	{
+		computer.RunMicro(c, a, d, again);
+		mainWindow->UpdateLogic();
+	}
 }
 
 void App::UpdateLogic()
@@ -114,11 +122,11 @@ void App::UpdateLogic()
 		mainWindow->state = PROGRAM_HALT;
 		break;
 	case PROGRAM_STEP_MICROCODE:
-		RunMicro();
+		RunMicro(mainWindow->cChanged, mainWindow->aChanged, mainWindow->dChanged);
 		mainWindow->state = PROGRAM_HALT;
 		break;
 	case PROGRAM_RUN_MICROCODE:
-		RunMicro();
+		RunMicro(mainWindow->cChanged, mainWindow->aChanged, mainWindow->dChanged);
 		break;
 	default:
 		break;

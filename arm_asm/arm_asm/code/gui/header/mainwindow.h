@@ -69,6 +69,7 @@ public:
 	void UpdateLogic();
 
 	int state = PROGRAM_HALT;
+	bool cChanged, aChanged, dChanged;
 
 private:
 	AppProxy* parent;
@@ -93,6 +94,7 @@ private:
 	wxTextCtrl* cir;
 	wxSlider* speedSlider;
 	wxCheckBox* ramColourBox;
+	wxSlider* animSpeedSlider;
 
 	std::vector<wxTextCtrl*> alu_texts;
 	std::vector<wxTextCtrl*> regfile_texts;

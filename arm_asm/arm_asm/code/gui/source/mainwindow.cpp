@@ -52,10 +52,13 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	wxStaticText* ram_label = new wxStaticText(this, wxID_ANY, wxT("RAM"));
 	ramSizer->Add(ram_label, wxGBPosition(0, 0));
 
+	animSpeedSlider = new wxSlider(this, wxID_ANY, 5, 1, 60, wxPoint(0, 0), wxSize(200, 60), wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
 	animSizer->Add(aluSizer, wxGBPosition(0, 0));
 	animSizer->Add(regfileSizer, wxGBPosition(0, 2));
 	animSizer->Add(decoderSizer, wxGBPosition(2, 0));
 	animSizer->Add(ramSizer, wxGBPosition(2, 2));
+	animSizer->Add(animSpeedSlider, wxGBPosition(3, 1));
 	animSizer->Add(150, 150, wxGBPosition(0, 1));
 	animSizer->Add(150, 150, wxGBPosition(1, 0));
 
@@ -165,11 +168,15 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	dNodes.push_back(wxPoint(100, 100));
 	dNodes.push_back(wxPoint(400, 100));
 
-	cAnim.speed = aAnim.speed = dAnim.speed = 5.0;
+	cAnim.speed = aAnim.speed = dAnim.speed = animSpeedSlider->GetValue();
 
 	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
 	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
 	bus_texts.push_back(new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(100, 30), wxTE_READONLY));
+
+	bus_texts.at(0)->Hide();
+	bus_texts.at(1)->Hide();
+	bus_texts.at(2)->Hide();
 
 	// Update
 	this->UpdateLogic();
@@ -273,6 +280,7 @@ void MainWindow::OnPaint(wxPaintEvent & event)
 
 void MainWindow::OnAnimTimer(wxTimerEvent & event)
 {
+	cAnim.speed = aAnim.speed = dAnim.speed = animSpeedSlider->GetValue();
 	Refresh();
 }
 
@@ -369,7 +377,7 @@ void MainWindow::UpdateLogic()
 		a << "ADDR: " << std::setw(4) << std::setfill('0') << std::hex << v.at(1);
 		d << "DATA: " << std::setw(4) << std::setfill('0') << std::hex << v.at(2);
 
-		if (bus_texts.at(0)->GetValue() == c.str())
+		if (!cChanged)
 			cAnim.source = cAnim.destination;
 		else
 		{
@@ -377,7 +385,7 @@ void MainWindow::UpdateLogic()
 			cAnim.source = COMPONENT_DECODER;
 		}
 
-		if (bus_texts.at(1)->GetValue() == a.str())
+		if (!aChanged)
 			aAnim.source = aAnim.destination;
 		else
 		{
@@ -385,7 +393,7 @@ void MainWindow::UpdateLogic()
 			aAnim.source = COMPONENT_DECODER;
 		}
 
-		if (bus_texts.at(2)->GetValue() == d.str())
+		if (!dChanged)
 			dAnim.source = dAnim.destination;
 		else
 		{
@@ -533,8 +541,6 @@ void MainWindow::UpdateLogic()
 		text->MarkerDeleteHandle(currentLineMarker);
 		currentLineMarker = text->MarkerAdd(line, MARKER_CURRENT_LINE);
 	}
-
-	//this->Refresh();
 }
 
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)

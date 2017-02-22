@@ -26,7 +26,7 @@ public:
 	void Read(std::vector<uint32_t>& as);
 	void Run();
 	void RunSingle();
-	void RunMicro();
+	void RunMicro(bool& c, bool& a, bool &d, bool& again);
 	void Tick();
 
 	void Reset();
@@ -118,9 +118,9 @@ inline void Computer<T>::RunSingle()
 }
 
 template<typename T>
-inline void Computer<T>::RunMicro()
+inline void Computer<T>::RunMicro(bool& c, bool& a, bool &d, bool& again)
 {
-	decoder.RunSingle();
+	decoder.RunSingle(c, a, d, again);
 }
 
 // Tick all systems in computer at once

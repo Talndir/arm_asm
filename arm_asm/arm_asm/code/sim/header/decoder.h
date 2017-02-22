@@ -44,7 +44,7 @@ public:
 	void Decode();
 	void Execute();
 
-	void RunSingle();
+	void RunSingle(bool& c, bool& a, bool& d, bool& again);
 
 	void GetRegister(int n);
 	void GetMemory(int n);
@@ -144,10 +144,10 @@ inline void Decoder<T>::Decode()
 	switch (flags)
 	{
 	case 0x01:
-		op3.push_back(Instruction(0, 0, (a << 8) + (b << 4) + c));
+		op3.push_back(Instruction(0x08FF, 0, (a << 8) + (b << 4) + c));
 		break;
 	case 0x02:
-		op3.push_back(Instruction(0, 0, (c << b) + a));
+		op3.push_back(Instruction(0x08FF, 0, (c << b) + a));
 		break;
 	case 0x03:
 		op3.push_back(Instruction(0x0200, a, 0));
@@ -230,22 +230,27 @@ inline void Decoder<T>::Execute()
 }
 
 template<typename T>
-inline void Decoder<T>::RunSingle()
+inline void Decoder<T>::RunSingle(bool& c, bool& a, bool& d, bool& again)
 {
-	if (microcode.size())
-	{
-		if (microcode.at(0).control != 0xFFFF) controlBus->Set(microcode.at(0).control);
-		if (microcode.at(0).address != 0xFFFF) addressBus->Set(microcode.at(0).address);
-		if (microcode.at(0).data != 0xFFFF) dataBus->Set(microcode.at(0).data);
-
-		computer->Tick();
-		microcode.erase(microcode.begin());
-	}
-	else
+	if (!microcode.size())
 	{
 		Fetch();
 		Decode();
 	}
+
+	again = false;
+
+	if (microcode.at(0).control == 0x08FF)
+		again = true;
+
+	c = a = d = false;
+
+	if (microcode.at(0).control != 0xFFFF) { controlBus->Set(microcode.at(0).control); c = true; }
+	if (microcode.at(0).address != 0xFFFF) { addressBus->Set(microcode.at(0).address); a = true; }
+	if (microcode.at(0).data != 0xFFFF) { dataBus->Set(microcode.at(0).data); d = true; }
+
+	computer->Tick();
+	microcode.erase(microcode.begin());
 }
 
 // Helper function - adds microcode to retrieve contents of Rn from register file

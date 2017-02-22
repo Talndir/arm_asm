@@ -27,7 +27,7 @@ public:
 	virtual int GetLine();
 	
 	void RunSingle();
-	void RunMicro();
+	void RunMicro(bool& c, bool& a, bool &d);
 
 	virtual void UpdateLogic();
 
