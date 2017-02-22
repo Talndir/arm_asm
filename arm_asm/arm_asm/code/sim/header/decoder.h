@@ -19,14 +19,6 @@
 #include "../../sim/header/component.h"
 #include "../../sim/header/instruction.h"
 
-/* Concatenate two vectors, result stored in a */
-template<typename T>
-void CombineVectors(std::vector<T>& a, std::vector<T>& b)
-{
-	a.reserve(a.size() + b.size());
-	a.insert(a.end(), b.begin(), b.end());
-}
-
 /* Class definition */
 template<typename T>
 class Decoder : public Component<T>
@@ -54,6 +46,7 @@ public:
 	void SwapBuses();
 	void SaveData(int b);
 	void LoadData(int b);
+	void GetOp3(std::vector<Instruction>& v);
 
 	void Tick();
 	void Print();
@@ -166,51 +159,170 @@ inline void Decoder<T>::Decode()
 
 	switch (opcode)
 	{
-	case 0x00:	// MOV Rn, O3
-		CombineVectors(microcode, op3);		// Get O3
+	case 0x00:	// 0x00:	MOV Rn, O3			Rn <- O3
+		GetOp3(op3);						// Get O3
 		StoreRegister(operand1);			// Store in Rn
 		break;
-	case 0x10:	// STR Rn, O3
-		CombineVectors(microcode, op3);		// Get O3
+
+	case 0x10:	// 0x10:	STR Rn, O3			[O3] <- Rn
+		GetOp3(op3);						// Get O3
 		SaveData(2);						// Save O3
 		GetRegister(operand1);				// Get Rn
 		LoadData(1);						// Put O3 onto address bus
 		microcode.push_back(Instruction(0x0401, 0xFFFF, 0xFFFF));	// Store in memory
 		break;
-	case 0x20:	// ADD Rn, Rm, O3
+	case 0x11:	// 0x11 :	LDR Rn, O3			Rn <- [O3]
+		GetOp3(op3);						// Get O3
+		SwapBuses();						// Move O3 to address bus
+		microcode.push_back(Instruction(0x0400, 0xFFFF, 0xFFFF));	// Get [O3]
+		StoreRegister(operand1);			// Store in Rn
+		break;
+
+	case 0x20:	// 0X20:	ADD Rn, Rm, O3		Rn <- Rm + O3
 		GetRegister(operand2);				// Get Rm
 		SendToALU(0);						// Read Rm into A0
-		CombineVectors(microcode, op3);		// Get O3
+		GetOp3(op3);						// Get O3
 		SendToALU(1);						// Read O3 into A1
 		microcode.push_back(Instruction(0x3100, 0x0000, 0x0000));	// Add A0, A1 and deposit onto data bus
 		StoreRegister(operand1);			// Store result in Rn
 		break;
-	case 0x30:	// JMP :LABEL (SUBTRACT FROM PC)
-		CombineVectors(microcode, op3);
-		microcode.push_back(Instruction(0x0840, 0x0000, 0xFFFF));
+	case 0x21:	// 0X21 : SUB Rn, Rm, O3		Rn <-Rm - O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3101, 0x0000, 0x0000));	// Sub A0, A1 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
 		break;
-	case 0x31:	// JMP :LABEL (ADD TO PC)
-		CombineVectors(microcode, op3);
-		microcode.push_back(Instruction(0x0841, 0x0000, 0xFFFF));
+	case 0x22:	// 0x22:	MOD Rn, Rm, O3		Rn <- Rm % O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3109, 0x0000, 0x0000));	// Calculate A0 % A1 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
 		break;
-	case 0x40:	// CMP R0, O3
-		GetRegister(operand1);
-		SendToALU(0);
-		CombineVectors(microcode, op3);
-		SendToALU(1);
-		microcode.push_back(Instruction(0x01A0, 0x0000, 0x0000));
+	case 0x23:	// 0x23 : LSL Rn, Rm, O3		Rn <-Rm << O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3107, 0x0000, 0x0000));	// Calculate A0 << A1 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
 		break;
-	case 0x50:	// BNE :LABEL (SUBTRACT FROM PC)
-		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));
-		SaveData(2);
-		CombineVectors(microcode, op3);
-		microcode.push_back(Instruction(0x0842, 0x0000, 0xFFFF));
+	case 0x24:	// 0x24 : LSR Rn, Rm, O3		Rn <-Rm >> O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3108, 0x0000, 0x0000));	// Calculate A0 >> A1 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
 		break;
-	case 0x51:	// BNE :LABEL (ADD TO PC)
-		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));
-		SaveData(2);
-		CombineVectors(microcode, op3);
-		microcode.push_back(Instruction(0x0843, 0x0000, 0xFFFF));
+	case 0x25:	// 0x25 : AND	Rn, Rm, O3		Rn <-Rm & O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3102, 0x0000, 0x0000));	// AND A0, A1 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
+		break;
+	case 0x26:	// 0x26:	ORR Rn, Rm, O3		Rn <- Rm | O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3103, 0x0000, 0x0000));	// OR A0, A1 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
+		break;
+	case 0x27:	// 0x27 : NOT Rn, O3			Rn <-!O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3104, 0x0000, 0x0000));	// NOT A0 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
+		break;
+	case 0x28:	// 0x28 : XOR	Rn, Rm, O3		Rn <-Rm ^ O3
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3106, 0x0000, 0x0000));	// XOR A0, A1 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
+		break;
+	case 0x29:	// 0x29:	NEG Rn, Rm			Rn <- ~Rm
+		GetRegister(operand2);				// Get Rm
+		SendToALU(0);						// Read Rm into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x3105, 0x0000, 0x0000));	// Take complement of A0 and deposit onto data bus
+		StoreRegister(operand1);			// Store result in Rn
+		break;
+
+	case 0x30:	// 0x30:	CMP Rn, O3			COMPARE Rn, O3
+		GetRegister(operand1);				// Get Rn
+		SendToALU(0);						// Read Rn into A0
+		GetOp3(op3);						// Get O3
+		SendToALU(1);						// Read O3 into A1
+		microcode.push_back(Instruction(0x01A0, 0x0000, 0x0000));	// Perform comparison (A0 - A1, no result except SR update)
+		break;
+
+	case 0x31:	// 0x31:	JMP :LABEL			BRANCH UNCONDITIONAL	(BACKWARD)
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0840, 0x0000, 0xFFFF));	// Unconditional branch (PC <- PC - O3)
+		break;
+	case 0x32:	// 0x32:	BEQ :LABEL			BRANCH IF Rn == Rm
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0844, 0x0000, 0xFFFF));	// Branch if ZERO flag is not set
+		break;
+	case 0x33:	// 0x33:	BNE :LABEL			BRANCH IF Rn != Rm		(BACKWARD)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0842, 0x0000, 0xFFFF));	// Branch if ZERO flag is set
+		break;
+	case 0x34:	// 0x34:	BGT :LABEL			BRANCH IF Rn > Rm		(BACKWARD)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0846, 0x0000, 0xFFFF));	// Branch if CARRY flag is not set and ZERO flag is not set
+		break;
+	case 0x35:	// 0x35:	BLT :LABEL			BRANCH IF Rn < Rm		(BACKWARD)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0848, 0x0000, 0xFFFF));	// Branch if CARRY flag is set
+		break;
+
+	case 0x41:	// 0x31:	JMP :LABEL			BRANCH UNCONDITIONAL	(FORWARD)
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0841, 0x0000, 0xFFFF));	// Unconditional branch (PC <- PC - O3)
+		break;
+	case 0x42:	// 0x32:	BEQ :LABEL			BRANCH IF Rn == Rm
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0845, 0x0000, 0xFFFF));	// Branch if ZERO flag is not set
+		break;
+	case 0x43:	// 0x33:	BNE :LABEL			BRANCH IF Rn != Rm		(FORWARD)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0843, 0x0000, 0xFFFF));	// Branch if ZERO flag is set
+		break;
+	case 0x44:	// 0x34:	BGT :LABEL			BRANCH IF Rn > Rm		(FORWARD)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0847, 0x0000, 0xFFFF));	// Branch if CARRY flag is not set and ZERO flag is not set
+		break;
+	case 0x45:	// 0x35:	BLT :LABEL			BRANCH IF Rn < Rm		(FORWARD)
+		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
+		SaveData(2);						// Save SR
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0849, 0x0000, 0xFFFF));	// Branch if CARRY flag is set
 		break;
 	}
 }
@@ -342,6 +454,13 @@ inline void Decoder<T>::LoadData(int b)
 }
 
 template<typename T>
+inline void Decoder<T>::GetOp3(std::vector<Instruction>& v)
+{
+	microcode.reserve(microcode.size() + v.size());
+	microcode.insert(microcode.end(), v.begin(), v.end());
+}
+
+template<typename T>
 inline void Decoder<T>::Tick()
 {
 	if ((uint8_t)((controlBus->Get() & 0x0F00) >> 8) == 0b1000)
@@ -397,6 +516,30 @@ inline void Decoder<T>::Tick()
 			break;
 		case 0x43:
 			if (!(temp.Get() & 0x01))
+				pc.Set(pc.Get() + (dataBus->Get() - 4));
+			break;
+		case 0x44:
+			if (temp.Get() & 0x01)
+				pc.Set(pc.Get() - (dataBus->Get() + 4));
+			break;
+		case 0x45:
+			if (temp.Get() & 0x01)
+				pc.Set(pc.Get() + (dataBus->Get() - 4));
+			break;
+		case 0x46:
+			if (!(temp.Get() & 0x02) && !(temp.Get() & 0x01))
+				pc.Set(pc.Get() - (dataBus->Get() + 4));
+			break;
+		case 0x47:
+			if (!(temp.Get() & 0x02) && !(temp.Get() & 0x01))
+				pc.Set(pc.Get() + (dataBus->Get() - 4));
+			break;
+		case 0x48:
+			if (temp.Get() & 0x02)
+				pc.Set(pc.Get() - (dataBus->Get() + 4));
+			break;
+		case 0x49:
+			if (temp.Get() & 0x02)
 				pc.Set(pc.Get() + (dataBus->Get() - 4));
 			break;
 		}
