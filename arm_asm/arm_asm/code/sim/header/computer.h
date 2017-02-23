@@ -73,6 +73,7 @@ inline Computer<T>::~Computer()
 {
 }
 
+// Reds code and writes it to memory, starting at 0x1000
 template<typename T>
 inline void Computer<T>::Read(std::vector<uint32_t>& as)
 {
@@ -105,6 +106,7 @@ inline void Computer<T>::Run()
 	registerFile.Print();
 }
 
+// Run single ASM instruction
 template<typename T>
 inline void Computer<T>::RunSingle()
 {
@@ -117,6 +119,7 @@ inline void Computer<T>::RunSingle()
 	}
 }
 
+// Run single microcode instruction
 template<typename T>
 inline void Computer<T>::RunMicro(bool& c, bool& a, bool &d, bool& again)
 {
@@ -133,6 +136,7 @@ inline void Computer<T>::Tick()
 	registerFile.Tick();
 }
 
+// Reset everything
 template<typename T>
 inline void Computer<T>::Reset()
 {
@@ -145,36 +149,42 @@ inline void Computer<T>::Reset()
 	registerFile.Reset();
 }
 
+// Get VDU data from RAM
 template<typename T>
 inline void Computer<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
 {
 	ram.GetVDU(v);
 }
 
+// Get register file data
 template<typename T>
 inline void Computer<T>::GetRegisterFile(std::vector<T>& v)
 {
 	registerFile.GetData(v);
 }
 
+// Get decoder data
 template<typename T>
 inline void Computer<T>::GetDecoder(std::vector<T>& v)
 {
 	decoder.GetData(v);
 }
 
+// Get contents of RAM
 template<typename T>
 inline void Computer<T>::GetRAM(std::vector<T>& v)
 {
 	ram.GetData(v);
 }
 
+// Get contents of ALU
 template<typename T>
 inline void Computer<T>::GetALU(std::vector<T>& v)
 {
 	alu.GetData(v);
 }
 
+// Get values of buses
 template<typename T>
 inline void Computer<T>::GetBuses(std::vector<T>& v)
 {

@@ -1,5 +1,12 @@
 #include "../io/io.h"
 
+/*
+	parse.cpp
+
+	CPP file for Parse function.
+*/
+
+// Parses code (already read in correctly) into 32-bit instructions to be stored in memory
 void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& code)
 {
 	std::string opcode, op1, op2, op3;
@@ -7,6 +14,7 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 	std::map<std::string, int> jumps;
 	int jumpOffset = 0;
 
+	/* Preprocessor - strips out labels and puts them in a jump table for later */
 	for (unsigned int i = 0; i < data.size(); ++i)
 	{
 		opcode = data.at(i).at(0);
@@ -19,10 +27,13 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 		}
 	}
 
+	/* Parse instructions, one at a time */
 	for (unsigned int i = 0; i < data.size(); ++i)
 	{
 		opcode = data.at(i).at(0);
 
+		// op3 is always last operand. This is because ARM uses RISC architecture with a simple instruction set and format.
+		// This only allows one operand to be an immediate value. So op3 is that operand. Can also be a register, but that's handled after
 		switch (data.at(i).size())
 		{
 		case 2:
@@ -39,7 +50,7 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 			break;
 		}
 
-		// Parse O3
+		// Parse O3 - differentiate between it being a register or immediate value
 		if (data.at(i).size() > 2)
 		{
 			if (op3.at(0) == 'R')					// Set flags as register
@@ -62,6 +73,9 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 			flags_ = 0x00;
 
 		/* Check each opcode individually */
+		// This is in linear time, so despite the tower of IF-ELSEs it's actually really fast
+		// A lot of instructions are the same in terms of number of operands or what you do with them.
+		// The code is repeated for simplicity - it doesn't make it slower, only larger, and prevents confusion when reading it later.
 
 		/* Register File */
 		// 0x00:	MOV Rn, O3			Rn <- O3
@@ -161,6 +175,11 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 		}
 
 		/* Branching (Decoder) */
+		// CMP is a regular instruction on the ALU, the rest are branches
+		// Branches execute PC <- PC - X where X is the jump offset
+		// All values are stored as unsigned, so jumping forwards (negative X) requires a modification
+		// If X is negative, add 0x10 to the operand and negate X, which executes PC <- PC + X instead
+
 		// 0x30:	CMP Rn, O3			COMPARE Rn, O3
 		else if (opcode == "CMP")
 		{
@@ -264,6 +283,7 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 			c_ = n & 0x0F;
 		}
 
+		// Construct instruction from the assorted pieces we now have
 		uint32_t f;
 		f = (opcode_ << 24) + (op1_ << 20) + (op2_ << 16) + (flags_ << 12) + (a_ << 8) + (b_ << 4) + c_;
 		code.push_back(f);

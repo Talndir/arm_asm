@@ -1,15 +1,23 @@
 #pragma once
 
-#include "../../gui/gui_include.h"
+/*
+	app.h
 
-#include "../../gui/header/appproxy.h"
-#include "../../gui/header/mainwindow.h"
-#include "../../gui/header/ticktimer.h"
+	Header file for App class.
+	Inherits from AppProxy.
+*/
 
-#include "../../sim/header/computer.h"
+#include "../../gui/gui_include.h"			// Inlcuding base gui includes
 
-#include "../../io/io.h"
+#include "../../gui/header/appproxy.h"		// Base class
+#include "../../gui/header/mainwindow.h"	// MainWindow class
+#include "../../gui/header/ticktimer.h"		// Timer class for time-based functions in App
 
+#include "../../sim/header/computer.h"		// Computer class
+
+#include "../../io/io.h"					// IO for reading files and parsing code
+
+/* Class definition */
 class App : public AppProxy
 {
 public:

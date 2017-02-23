@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+	io.h
+
+	Header file for IO functions.
+	Only need to include this for all the IO funcs.
+*/
+
 #include <vector>
 #include <fstream>
 #include <string>
@@ -7,6 +14,7 @@
 #include <algorithm>
 #include <map>
 
+/* Function declarations */
 void ReadFromFile(std::string filename, std::vector<std::vector<std::string>>& data);
 void ReadFromString(std::string& str, std::vector<std::vector<std::string>>& data);
 void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& code);

@@ -101,44 +101,45 @@ inline void ALU<T>::Tick()
 		bool z = 0, v = 0, c = 0, s = 0;
 		T temp;
 
+		// SWitch on instruction
 		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
-		case 0x00:
+		case 0x00:	// Add
 			acc.Set(r0.Get() + r1.Get());
 			c = ((acc.Get() & 0x8000) != (r0.Get() & 0x8000)) && (!(acc.Get() & 0x8000));
 			v = ((r0.Get() & 0x8000) == (r1.Get() & 0x8000)) && ((acc.Get() & 0x8000) != (r0.Get() & 0x8000));
 			break;
-		case 0x01:
+		case 0x01:	// Subtract
 			acc.Set(r0.Get() - r1.Get());
 			c = ((acc.Get() & 0x8000) != (r0.Get() & 0x8000)) && ((acc.Get() & 0x8000));
 			v = ((r0.Get() & 0x8000) != (r1.Get() & 0x8000)) && ((acc.Get() & 0x8000) != (r0.Get() & 0x8000));
 			break;
-		case 0x02:
+		case 0x02:	// Bitwise AND
 			acc.Set(r0.Get() & r1.Get());
 			break;
-		case 0x03:
+		case 0x03:	// Bitwise OR
 			acc.Set(r0.Get() | r1.Get());
 			break;
-		case 0x04:
+		case 0x04:	// Bitwise NOT
 			acc.Set(!r0.Get());
 			break;
-		case 0x05:
+		case 0x05:	// Bitwise complement
 			acc.Set(~r0.Get());
 			break;
-		case 0x06:
+		case 0x06:	// Bitwise XOR
 			acc.Set(r0.Get() ^ r1.Get());
 			break;
-		case 0x07:
+		case 0x07:	// Logical shift left
 			acc.Set(r0.Get() << r1.Get());
 			break;
-		case 0x08:
+		case 0x08:	// Logical shift right
 			acc.Set(r0.Get() >> r1.Get());
 			break;
-		case 0x09:
+		case 0x09:	// Modulo
 			acc.Set(r0.Get() % r1.Get());
 			break;
 
-		case 0xA0:
+		case 0xA0:	// Compare (subtract, update SR, discard result)
 			temp = acc.Get();
 			acc.Set(r0.Get() - r1.Get());
 			c = ((acc.Get() & 0x8000) != (r0.Get() & 0x8000)) && ((acc.Get() & 0x8000));
@@ -168,6 +169,7 @@ inline void ALU<T>::Tick()
 		z = !acc.Get();
 		s = acc.Get() & 0x8000;
 
+		// Write values to databus if necessary
 		switch ((uint8_t)((controlBus->Get() & 0xF000) >> 12))
 		{
 		case 0:
@@ -201,6 +203,7 @@ inline void ALU<T>::Print()
 	std::cout << "SR: " << std::hex << sr.Get() << std::endl;
 }
 
+// Resets ALU
 template<typename T>
 inline void ALU<T>::Reset()
 {
@@ -210,10 +213,12 @@ inline void ALU<T>::Reset()
 	sr.Set((T)0);
 }
 
+// Supplies A0, A1, ACC and SR
 template<typename T>
 inline void ALU<T>::GetData(std::vector<T>& v)
 {
 	v.push_back(r0.Get());
 	v.push_back(r1.Get());
 	v.push_back(acc.Get());
+	v.push_back(sr.Get());
 }

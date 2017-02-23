@@ -1,29 +1,41 @@
 #pragma once
 
-#define wxUSE_GUI true
-#include <wx\wxprec.h>
+/*
+	gui_include.h
 
+	Weird inbetween file that contains stuff some of the GUI classes need.
+*/
+
+#define wxUSE_GUI true	// This forces a bunch of GUI files to be #included in wx\wxprec.h
+#include <wx\wxprec.h>	// Included main wxWidgets files
+
+// Reprensents RGB colour format
 struct rgb
 {
 	rgb(double x, double y, double z) : r(x), g(y), b(z) {}
 	rgb() {}
-	double r;       // percent
-	double g;       // percent
-	double b;       // percent
+	double r;		// [0, 1]
+	double g;		// [0, 1]
+	double b;		// [0, 1]
 };
 
+// Represents HSV colour format
 struct hsv
 {
 	hsv(double x, double y, double z) : h(x), s(y), v(z) {}
 	hsv() {}
-	double h;       // angle in degrees
-	double s;       // percent
-	double v;       // percent
+	double h;		// Angle in degrees [0, 359]
+	double s;		// [0, 1]
+	double v;		// [0, 1]
 };
 
 static hsv   rgb2hsv(rgb in);
 static rgb   hsv2rgb(hsv in);
 
+// Converts from RGB to HSV
+// Taken from a website, source unknown
+// I'll rewrite this later once I understand how it actually works
+// Comments are original programmer's
 inline hsv rgb2hsv(rgb in)
 {
 	hsv         out;
@@ -69,7 +81,10 @@ inline hsv rgb2hsv(rgb in)
 	return out;
 }
 
-
+// Converts from HSV to RGB
+// Taken from a website, source unknown
+// I'll rewrite this later once I understand how it actually works
+// Comments are original programmer's
 inline rgb hsv2rgb(hsv in)
 {
 	double      hh, p, q, t, ff;
@@ -128,11 +143,13 @@ inline rgb hsv2rgb(hsv in)
 	return out;
 }
 
+// Turns wxColour (yay! correct spelling for once!) into rgb struct
 inline rgb wx2rgb(wxColor& c)
 {
 	return rgb(c.Red() / 255.0, c.Green() / 255.0, c.Blue() / 255.0);
 }
 
+// Turns rgb struct into wxColour
 inline wxColor rgb2wx(rgb& c)
 {
 	return wxColor(c.r * 255, c.g * 255, c.b * 255);

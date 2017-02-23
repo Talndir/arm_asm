@@ -134,6 +134,7 @@ inline void Decoder<T>::Decode()
 
 	std::vector<Instruction> op3;
 
+	// OP3 flags - is it a register, immediate, immediate shifted left etc.
 	switch (flags)
 	{
 	case 0x01:
@@ -151,12 +152,13 @@ inline void Decoder<T>::Decode()
 		op3.push_back(Instruction(0x01F1, 0, (b << 4) + c));
 		op3.push_back(Instruction(0x3100, 0, 0));
 		break;
-	case 0x05:
+	case 0x05:	// Currently unused
 		break;
-	case 0x06:
+	case 0x06:	// Currently unused
 		break;
 	}
 
+	// Switch on opcode and generate relevant microcode
 	switch (opcode)
 	{
 	case 0x00:	// 0x00:	MOV Rn, O3			Rn <- O3
@@ -341,9 +343,11 @@ inline void Decoder<T>::Execute()
 	}
 }
 
+// Run single microcode instruction
 template<typename T>
 inline void Decoder<T>::RunSingle(bool& c, bool& a, bool& d, bool& again)
 {
+	// If no microcode, fetch and decode the next ASM instruction
 	if (!microcode.size())
 	{
 		Fetch();
@@ -352,17 +356,21 @@ inline void Decoder<T>::RunSingle(bool& c, bool& a, bool& d, bool& again)
 
 	again = false;
 
+	// If control code is 0x08FF that's an empty decoder write so tell whoever is calling to run the function again
+	// If this simply called RunSingle() recursively we would get stuck in an endless loop at end of program, so we pass to caller instead
 	if (microcode.at(0).control == 0x08FF)
 		again = true;
 
 	c = a = d = false;
 
+	// If instruction is 0xFFFF, don't write anything (and let the caller know too)
 	if (microcode.at(0).control != 0xFFFF) { controlBus->Set(microcode.at(0).control); c = true; }
 	if (microcode.at(0).address != 0xFFFF) { addressBus->Set(microcode.at(0).address); a = true; }
 	if (microcode.at(0).data != 0xFFFF) { dataBus->Set(microcode.at(0).data); d = true; }
 
+	// Tick the computer, then erase first instruction
 	computer->Tick();
-	microcode.erase(microcode.begin());
+	microcode.erase(microcode.begin());		// Might be a good idea to use an std::queue here instead
 }
 
 // Helper function - adds microcode to retrieve contents of Rn from register file
@@ -453,6 +461,7 @@ inline void Decoder<T>::LoadData(int b)
 	microcode.push_back(i);
 }
 
+// Helper function - retrieves final value of operand 3 by concatenaing current code and op3 code
 template<typename T>
 inline void Decoder<T>::GetOp3(std::vector<Instruction>& v)
 {
@@ -460,6 +469,7 @@ inline void Decoder<T>::GetOp3(std::vector<Instruction>& v)
 	microcode.insert(microcode.end(), v.begin(), v.end());
 }
 
+// Executes operation specified by value on control bus
 template<typename T>
 inline void Decoder<T>::Tick()
 {
@@ -467,6 +477,7 @@ inline void Decoder<T>::Tick()
 	{
 		T t;
 
+		// Most of these instructions are self explanatory
 		switch ((uint8_t)(controlBus->Get() & 0x00FF))
 		{
 		case 0x00:
@@ -504,6 +515,8 @@ inline void Decoder<T>::Tick()
 		case 0x33:
 			cir.Set(cir.Get() + (temp.Get() << 24));
 			break;
+		// These are the branch instructions, chaning PC on various conditions
+		// Even numbers jump back, odd numbers jump forward
 		case 0x40:
 			pc.Set(pc.Get() - (dataBus->Get() + 4));
 			break;
@@ -554,15 +567,17 @@ inline void Decoder<T>::Print()
 	std::cout << "CIR: " << std::hex << cir.Get() << std::endl;
 }
 
+// Resets everything
 template<typename T>
 inline void Decoder<T>::Reset()
 {
 	cir.Set(1);
-	pc.Set(0x1000);
+	pc.Set(0x1000);		// Be sure not to set PC to 0 since instructions start at 0x1000
 	temp.Set(0);
 	microcode.clear();
 }
 
+// Give the caller the PC, and the CIR in four pieces
 template<typename T>
 inline void Decoder<T>::GetData(std::vector<T>& v)
 {

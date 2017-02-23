@@ -1,6 +1,14 @@
 #pragma once
 
-#include "../../gui/gui_include.h"
+/*
+appproxy.h
+
+Header file for AppProxy class.
+Inherits from wxApp.
+Abstract class.
+*/
+
+#include "../../gui/gui_include.h"		// Inlcuding base gui includes
 
 class AppProxy : public wxApp
 {

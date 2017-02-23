@@ -96,6 +96,7 @@ inline void RegisterFile<T>::Print()
 		std::cout << "R" << i << ": " << std::hex << registers.at(i).Get() << std::endl;
 }
 
+// Resets all general purpose registers to 0
 template<typename T>
 inline void RegisterFile<T>::Reset()
 {
@@ -103,6 +104,7 @@ inline void RegisterFile<T>::Reset()
 		registers.at(i).Reset();
 }
 
+// Passes back contents of all general purpose registers
 template<typename T>
 inline void RegisterFile<T>::GetData(std::vector<T>& v)
 {

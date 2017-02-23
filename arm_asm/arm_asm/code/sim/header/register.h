@@ -53,6 +53,7 @@ inline void Register<T>::Set(typename T v)
 	value = v;
 }
 
+// Reset to 0
 template<typename T>
 inline void Register<T>::Reset()
 {

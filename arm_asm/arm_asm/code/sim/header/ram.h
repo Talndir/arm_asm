@@ -124,7 +124,7 @@ inline void RAM<T>::GetData(std::vector<T>& v)
 		v.push_back(memory.at(i));
 }
 
-// Prints VDU to console (first 1024 memory locations)
+// Prints VDU to console (first 256 memory locations)
 template<typename T>
 inline void RAM<T>::PrintVDU()
 {
@@ -145,6 +145,7 @@ inline void RAM<T>::PrintVDU()
 	SetConsoleTextAttribute(hConsole, 15);
 }
 
+// Pass back contents of VDU, which is just memory locations 0x00 to 0xFF
 template<typename T>
 inline void RAM<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
 {
