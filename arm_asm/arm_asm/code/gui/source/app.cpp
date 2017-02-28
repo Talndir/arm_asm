@@ -11,7 +11,7 @@
 // Initialisation function - overrides base class function, essentially a constrctor
 bool App::OnInit()
 {
-	mainWindow = new MainWindow("ARM_ASM", wxPoint(50, 50), wxSize(1280, 720), this);
+	mainWindow = new MainWindow("ARM_ASM", wxPoint(50, 50), wxSize(1400, 750), this);
 	mainWindow->Show(true);
 
 	timer = new TickTimer(this);

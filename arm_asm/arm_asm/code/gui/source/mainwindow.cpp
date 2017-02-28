@@ -29,7 +29,7 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	wxGridBagSizer* animSizer = new wxGridBagSizer;
 
 	// ALU
-	wxPanel* aluPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
+	wxPanel* aluPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(160, 200));
 	wxGridBagSizer* aluSizer = new wxGridBagSizer;
 	wxStaticText* alu_label = new wxStaticText(aluPanel, wxID_ANY, wxT("ALU"));
 	aluSizer->Add(alu_label, wxGBPosition(0, 0));
@@ -42,48 +42,48 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	aluPanel->SetSizer(aluSizer);
 
 	// Register File
-	wxPanel* regfilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(320, 200));
+	wxPanel* regfilePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(160, 280));
 	wxGridBagSizer* regfileSizer = new wxGridBagSizer;
 	wxStaticText* regfile_label = new wxStaticText(regfilePanel, wxID_ANY, wxT("Register File"));
 	regfileSizer->Add(regfile_label, wxGBPosition(0, 0));
-	for (unsigned int i = 0; i < 4; ++i)
+	for (unsigned int i = 0; i < 8; ++i)
 	{
-		for (unsigned int j = 0; j < 4; ++j)
+		for (unsigned int j = 0; j < 2; ++j)
 		{
 			regfile_texts.push_back(new wxTextCtrl(regfilePanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
-			regfileSizer->Add(regfile_texts.at(i * 4 + j), wxGBPosition(i + 1, j));
+			regfileSizer->Add(regfile_texts.at(i * 2 + j), wxGBPosition(i + 1, j));
 		}
 	}
 	regfilePanel->SetSizer(regfileSizer);
 
 	// Decoder
-	wxPanel* decoderPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
+	wxPanel* decoderPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(160, 200));
 	wxGridBagSizer* decoderSizer = new wxGridBagSizer;
 	wxStaticText* decoder_label = new wxStaticText(decoderPanel, wxID_ANY, wxT("Decoder"));
 	decoderSizer->Add(decoder_label, wxGBPosition(0, 0));
 	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
-	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(200, 30), wxTE_READONLY));
+	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(160, 30), wxTE_READONLY));
 	decoderSizer->Add(decoder_texts.at(0), wxGBPosition(1, 0));
 	decoderSizer->Add(decoder_texts.at(1), wxGBPosition(2, 0));
 	decoderPanel->SetSizer(decoderSizer);
 
 	// RAM
-	wxPanel* ramPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
+	wxPanel* ramPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(160, 200));
 	wxGridBagSizer* ramSizer = new wxGridBagSizer;
 	wxStaticText* ram_label = new wxStaticText(ramPanel, wxID_ANY, wxT("RAM"));
 	ramSizer->Add(ram_label, wxGBPosition(0, 0));
 	ramPanel->SetSizer(ramSizer);
 
 	// Animation speed
-	animSpeedSlider = new wxSlider(this, wxID_ANY, 5, 1, 60, wxPoint(0, 0), wxSize(200, 60), wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	animSpeedSlider = new wxSlider(this, wxID_ANY, 5, 1, 60, wxPoint(0, 0), wxSize(160, 60), wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	animSizer->Add(aluPanel, wxGBPosition(0, 0));
 	animSizer->Add(regfilePanel, wxGBPosition(0, 2));
 	animSizer->Add(decoderPanel, wxGBPosition(2, 0));
 	animSizer->Add(ramPanel, wxGBPosition(2, 2));
 	animSizer->Add(animSpeedSlider, wxGBPosition(3, 1));
-	animSizer->Add(300, 200, wxGBPosition(0, 1));
-	animSizer->Add(200, 200, wxGBPosition(1, 0));
+	animSizer->Add(160, 200, wxGBPosition(0, 1));
+	animSizer->Add(160, 100, wxGBPosition(1, 0));
 
 	/* Text editor */
 	text = new wxStyledTextCtrl(this, wxID_ANY, wxPoint(), wxSize(250, 720));
@@ -104,12 +104,12 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	wxGridBagSizer* dataSizer = new wxGridBagSizer;
 
 	/* VDU */
-	vdu = new wxGrid(this, wxID_ANY, wxPoint(0, 0), wxSize(600, 600), wxWANTS_CHARS, "RAM Grid");
+	vdu = new wxGrid(this, wxID_ANY, wxPoint(0, 0), wxSize(440, 440), wxWANTS_CHARS, "RAM Grid");
 	vdu->CreateGrid(16, 16);
-	vdu->SetDefaultRowSize(30);
-	vdu->SetDefaultColSize(30);
-	vdu->SetRowLabelSize(30);
-	vdu->SetColLabelSize(30);
+	vdu->SetDefaultRowSize(24);
+	vdu->SetDefaultColSize(24);
+	vdu->SetRowLabelSize(24);
+	vdu->SetColLabelSize(24);
 	vdu->DisableDragRowSize();
 	vdu->DisableDragColSize();
 
@@ -153,17 +153,17 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	/* Menu */
 	// File menu
 	wxMenu* menuFile = new wxMenu;
-	menuFile->Append(MENU_LOAD, "Load");
-	menuFile->Append(MENU_SAVE, "Save");
+	menuFile->Append(MENU_LOAD, "Open\tCTRL-O");
+	menuFile->Append(MENU_SAVE, "Save\tCTRL-S");
 
 	// Program menu
 	wxMenu* menuProgram = new wxMenu;
-	menuProgram->Append(MENU_RUN, "Run");
-	menuProgram->Append(MENU_STEP_INSTRUCTION, "Step Instruction");
-	menuProgram->Append(MENU_STEP_MICROCODE, "Step Microcode");
-	menuProgram->Append(MENU_COMPILE, "Compile");
-	menuProgram->Append(MENU_HALT, "Halt");
-	menuProgram->Append(MENU_RUN_MICROCODE, "Run Microcode");
+	menuProgram->Append(MENU_RUN, "Run\tF5");
+	menuProgram->Append(MENU_STEP_INSTRUCTION, "Step Instruction\tF1");
+	menuProgram->Append(MENU_STEP_MICROCODE, "Step Microcode\tF2");
+	menuProgram->Append(MENU_COMPILE, "Compile\tF4");
+	menuProgram->Append(MENU_HALT, "Halt\tF3");
+	menuProgram->Append(MENU_RUN_MICROCODE, "Run Microcode\tF6");
 
 	// Menu bar
 	wxMenuBar* menuBar = new wxMenuBar;
@@ -180,26 +180,26 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	this->Connect(pauseTimer.GetId(), wxEVT_TIMER, wxTimerEventHandler(MainWindow::OnPauseTimer), NULL, this);
 	
 	// Nodes for animation (interp points)
+	cNodes.push_back(wxPoint(160, 450));
+	cNodes.push_back(wxPoint(320, 450));
 	cNodes.push_back(wxPoint(200, 450));
-	cNodes.push_back(wxPoint(500, 450));
-	cNodes.push_back(wxPoint(300, 450));
-	cNodes.push_back(wxPoint(300, 150));
 	cNodes.push_back(wxPoint(200, 150));
-	cNodes.push_back(wxPoint(500, 150));
+	cNodes.push_back(wxPoint(160, 150));
+	cNodes.push_back(wxPoint(320, 150));
 
-	aNodes.push_back(wxPoint(200, 500));
-	aNodes.push_back(wxPoint(500, 500));
-	aNodes.push_back(wxPoint(350, 500));
-	aNodes.push_back(wxPoint(350, 100));
-	aNodes.push_back(wxPoint(200, 100));
-	aNodes.push_back(wxPoint(500, 100));
+	aNodes.push_back(wxPoint(160, 500));
+	aNodes.push_back(wxPoint(320, 500));
+	aNodes.push_back(wxPoint(240, 500));
+	aNodes.push_back(wxPoint(240, 100));
+	aNodes.push_back(wxPoint(160, 100));
+	aNodes.push_back(wxPoint(320, 100));
 
-	dNodes.push_back(wxPoint(200, 550));
-	dNodes.push_back(wxPoint(500, 550));
-	dNodes.push_back(wxPoint(400, 550));
-	dNodes.push_back(wxPoint(400, 50));
-	dNodes.push_back(wxPoint(200, 50));
-	dNodes.push_back(wxPoint(500, 50));
+	dNodes.push_back(wxPoint(160, 550));
+	dNodes.push_back(wxPoint(320, 550));
+	dNodes.push_back(wxPoint(280, 550));
+	dNodes.push_back(wxPoint(280, 50));
+	dNodes.push_back(wxPoint(160, 50));
+	dNodes.push_back(wxPoint(320, 50));
 
 	// Animation speed
 	cAnim.speed = aAnim.speed = dAnim.speed = animSpeedSlider->GetValue();
