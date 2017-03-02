@@ -1,0 +1,10 @@
+MOV R0, #1
+MOV R1, #1
+MOV R2, #1
+MOV R3, #1
+MOV R4, #1
+MOV R5, #1
+
+:LOOP
+ADD R0, R0, #1
+JMP LOOP

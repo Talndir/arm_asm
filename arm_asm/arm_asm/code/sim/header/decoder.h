@@ -57,6 +57,7 @@ private:
 	Register<uint32_t> cir;
 	Register<T> pc;
 	Register<T> temp;
+	Register<T> pc_old;
 	std::vector<Instruction> microcode;
 	Computer<T>* computer;
 };
@@ -113,6 +114,7 @@ inline void Decoder<T>::Fetch()
 
 	this->Execute();
 
+	pc_old.Set(pc.Get());
 	pc.Set(pc.Get() + 4);
 }
 
@@ -586,4 +588,5 @@ inline void Decoder<T>::GetData(std::vector<T>& v)
 	v.push_back((cir.Get() >> 8) & 0xFF);
 	v.push_back((cir.Get() >> 16) & 0xFF);
 	v.push_back((cir.Get() >> 24) & 0xFF);
+	v.push_back(pc_old.Get());
 }

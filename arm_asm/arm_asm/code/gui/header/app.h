@@ -37,6 +37,7 @@ public:
 	void RunSingle();
 	void RunMicro(bool& c, bool& a, bool &d);
 
+	virtual void UpdateTimer(wxCommandEvent& event);
 	virtual void UpdateLogic();
 
 private:

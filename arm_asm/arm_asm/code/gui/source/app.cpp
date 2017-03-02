@@ -17,6 +17,8 @@ bool App::OnInit()
 	timer = new TickTimer(this);
 	timer->Start(50);
 
+	mainWindow->speedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &App::UpdateTimer, this);
+
 	return true;
 }
 
@@ -80,11 +82,12 @@ int App::GetLine()
 	std::vector<uint16_t> v;
 	computer.GetDecoder(v);
 
-	std::map<int, int>::iterator it = memoryToLine.find(v.at(0) - 4);
+	std::map<int, int>::iterator it = memoryToLine.find(v.at(5));
+
 	if (it != memoryToLine.end())
 		return it->second;
 	else
-		return 0;		// If no corresponding line is found, use first line
+		return -1;		// If no corresponding line is found, return -1 for no line
 }
 
 // Run a single ASM instruction
@@ -109,11 +112,21 @@ void App::RunMicro(bool& c, bool& a, bool &d)
 	}
 }
 
+// Update timer from slider on GUI
+void App::UpdateTimer(wxCommandEvent & event)
+{
+	float speed = (mainWindow->GetSpeed() - 1) / float(100 - 1);
+	speed = (1.f - speed) * (1000 - 2) + 2;
+	timer->Start(speed);
+}
+
 // Uses mainWindow->State to select which action to take per timer tick
 void App::UpdateLogic()
 {
-	timer->Start(mainWindow->GetSpeed());		// Update timer speed
+	// Update timer speed
+	UpdateTimer(wxScrollEvent());
 
+	// Execute what needs to be executed
 	switch (mainWindow->state)
 	{
 	case PROGRAM_RUNNING:

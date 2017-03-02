@@ -80,6 +80,7 @@ public:
 
 	void UpdateLogic();
 
+	wxSlider* speedSlider;
 	int state;
 	bool cChanged, aChanged, dChanged;
 
@@ -105,7 +106,6 @@ private:
 	std::vector<wxTextCtrl*> registerBoxes;
 	wxTextCtrl* pc;
 	wxTextCtrl* cir;
-	wxSlider* speedSlider;
 	wxCheckBox* ramColourBox;
 	wxSlider* animSpeedSlider;
 

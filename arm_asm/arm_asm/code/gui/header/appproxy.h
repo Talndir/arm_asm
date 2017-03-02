@@ -23,5 +23,6 @@ public:
 
 	virtual int GetLine() = 0;
 
+	virtual void UpdateTimer(wxCommandEvent& event) = 0;
 	virtual void UpdateLogic() = 0;
 };

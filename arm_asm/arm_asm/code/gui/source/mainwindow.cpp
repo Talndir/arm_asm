@@ -136,7 +136,7 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	spregSizer->Add(cir);
 
 	/* Speed slider */
-	speedSlider = new wxSlider(this, wxID_ANY, 50, 1, 1000, wxPoint(0, 0), wxSize(200, 60), wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	speedSlider = new wxSlider(this, wxID_ANY, 5, 1, 100, wxPoint(0, 0), wxSize(200, 60), wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	/* Add elements to sizers */
 	dataSizer->Add(regSizer, wxGBPosition(0, 0));
@@ -616,8 +616,10 @@ void MainWindow::UpdateLogic()
 	{
 		int line = parent->GetLine();
 
-		text->MarkerDeleteHandle(currentLineMarker);						// Delete line marker from previous line
-		currentLineMarker = text->MarkerAdd(line, MARKER_CURRENT_LINE);		// Draw line marker on current line
+		text->MarkerDeleteHandle(currentLineMarker);							// Delete line marker from previous line
+
+		if (line != -1)
+			currentLineMarker = text->MarkerAdd(line, MARKER_CURRENT_LINE);		// Draw line marker on current line
 	}
 }
 
