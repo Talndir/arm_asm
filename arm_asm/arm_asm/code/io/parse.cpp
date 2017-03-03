@@ -36,6 +36,8 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 		// This only allows one operand to be an immediate value. So op3 is that operand. Can also be a register, but that's handled after
 		switch (data.at(i).size())
 		{
+		case 1:
+			break;
 		case 2:
 			op3 = data.at(i).at(1);
 			break;
@@ -281,6 +283,36 @@ void Parse(std::vector<std::vector<std::string>>& data, std::vector<uint32_t>& c
 			a_ = (n >> 8) & 0x0F;
 			b_ = (n >> 4) & 0x0F;
 			c_ = n & 0x0F;
+		}
+		// 0x36:	CAL :LABEL		BRANCH THEN RETURN ON RET
+		else if (opcode == "CAL")
+		{
+			opcode_ = 0x36;
+			op1_ = 0x00;
+			op2_ = 0x00;
+			flags_ = 0x01;
+			int n = (i - jumps.find(op3)->second) * 4;
+
+			if (n < 0)
+			{
+				opcode_ = 0x46;
+				n = -n;
+			}
+
+			a_ = (n >> 8) & 0x0F;
+			b_ = (n >> 4) & 0x0F;
+			c_ = n & 0x0F;
+		}
+		// 0x37:	RET			RETURN FROM CALL
+		else if (opcode == "RET")
+		{
+			opcode_ = 0x37;
+			op1_ = 0x00;
+			op2_ = 0x00;
+			flags_ = 0x01;
+			a_ = 0x00;
+			b_ = 0x00;
+			c_ = 0x00;
 		}
 
 		// Construct instruction from the assorted pieces we now have

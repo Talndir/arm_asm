@@ -58,6 +58,7 @@ private:
 	Register<T> pc;
 	Register<T> temp;
 	Register<T> pc_old;
+	Register<T> lr;
 	std::vector<Instruction> microcode;
 	Computer<T>* computer;
 };
@@ -299,10 +300,18 @@ inline void Decoder<T>::Decode()
 		GetOp3(op3);						// Get O3
 		microcode.push_back(Instruction(0x0848, 0x0000, 0xFFFF));	// Branch if CARRY flag is set
 		break;
+	case 0x36:	// 0X36:	CAL :LABEL			BRANCH THEN RETURN		(BACKWARD)
+		microcode.push_back(Instruction(0x0834, 0x0000, 0x0000));	// Save return address in link register
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0840, 0x0000, 0xFFFF));	// Unconditional branch (PC <- PC - O3)
+		break;
+	case 0x37:	// 0x37:	RET			RETURN FROM CALL
+		microcode.push_back(Instruction(0x0835, 0x0000, 0x0000));	// Load return address from link register
+		break;
 
 	case 0x41:	// 0x31:	JMP :LABEL			BRANCH UNCONDITIONAL	(FORWARD)
 		GetOp3(op3);						// Get O3
-		microcode.push_back(Instruction(0x0841, 0x0000, 0xFFFF));	// Unconditional branch (PC <- PC - O3)
+		microcode.push_back(Instruction(0x0841, 0x0000, 0xFFFF));	// Unconditional branch (PC <- PC + O3)
 		break;
 	case 0x42:	// 0x32:	BEQ :LABEL			BRANCH IF Rn == Rm
 		microcode.push_back(Instruction(0x01F5, 0x0000, 0x0000));	// Get SR
@@ -327,6 +336,11 @@ inline void Decoder<T>::Decode()
 		SaveData(2);						// Save SR
 		GetOp3(op3);						// Get O3
 		microcode.push_back(Instruction(0x0849, 0x0000, 0xFFFF));	// Branch if CARRY flag is set
+		break;
+	case 0x46:	// 0X36:	CAL :LABEL			BRANCH THEN RETURN		(FORWARD)
+		microcode.push_back(Instruction(0x0834, 0x0000, 0x0000));	// Save return address in link register
+		GetOp3(op3);						// Get O3
+		microcode.push_back(Instruction(0x0841, 0x0000, 0xFFFF));	// Unconditional branch (PC <- PC + O3)
 		break;
 	}
 }
@@ -517,6 +531,17 @@ inline void Decoder<T>::Tick()
 		case 0x33:
 			cir.Set(cir.Get() + (temp.Get() << 24));
 			break;
+		case 0x34:
+			lr.Set(pc.Get());
+			break;
+		case 0x35:
+			if (lr.Get())
+			{
+				pc.Set(lr.Get());
+				lr.Set(0x0000);
+			}
+			break;
+
 		// These are the branch instructions, chaning PC on various conditions
 		// Even numbers jump back, odd numbers jump forward
 		case 0x40:
