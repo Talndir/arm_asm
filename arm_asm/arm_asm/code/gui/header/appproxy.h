@@ -14,7 +14,7 @@ class AppProxy : public wxApp
 {
 public:
 	virtual void Compile() = 0;
-	virtual void GetVDU(std::vector<std::vector<uint8_t>>& v) = 0;
+	virtual void GetVDU(std::vector<std::vector<uint8_t>>& v, int page) = 0;
 	virtual void GetRegisterFile(std::vector<uint16_t>& v) = 0;
 	virtual void GetDecoder(std::vector<uint16_t>& v) = 0;
 	virtual void GetRAM(std::vector<uint16_t>& v) = 0;

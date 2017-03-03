@@ -116,6 +116,10 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	// Checkbox for enabling/disabling colours
 	ramColourBox = new wxCheckBox(this, wxID_ANY, "RAM colours");
 
+	// Text box for choosing VDU 'page'
+	vduPage = new wxTextCtrl(this, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_LEFT | wxFILTER_NUMERIC);
+	vduPage->SetValue("0");
+
 	/* Registers */
 	// General purpose registers
 	wxBoxSizer* regSizer = new wxBoxSizer(wxVERTICAL);
@@ -143,7 +147,8 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	dataSizer->Add(spregSizer, wxGBPosition(0, 1));
 	dataSizer->Add(vdu, wxGBPosition(0, 2));
 	dataSizer->Add(ramColourBox, wxGBPosition(1, 2));
-	dataSizer->Add(speedSlider, wxGBPosition(2, 2));
+	dataSizer->Add(vduPage, wxGBPosition(2, 2));
+	dataSizer->Add(speedSlider, wxGBPosition(3, 2));
 	
 	globalSizer->Add(animSizer, wxGBPosition(0, 0));
 	globalSizer->Add(text, wxGBPosition(0, 1));
@@ -365,8 +370,16 @@ void MainWindow::UpdateLogic()
 {
 	// Update VDU
 	{
+		std::string s = vduPage->GetValue();
+		if (s != "")
+			vduPage->SetValue(wxString() << (int)std::max(0, std::min(255, std::stoi(s))));
+
 		std::vector<std::vector<uint8_t>> v;
-		parent->GetVDU(v);
+
+		if (s != "")
+			parent->GetVDU(v, std::stoi(std::string(vduPage->GetValue())));
+		else
+			parent->GetVDU(v, 0);
 
 		for (unsigned int i = 0; i < 16; ++i)
 		{
@@ -375,12 +388,12 @@ void MainWindow::UpdateLogic()
 				if (ramColourBox->GetValue())	// Change background colour if box checked, else change text
 				{
 					vdu->SetCellValue(i, j, "");
-					vdu->SetCellBackgroundColour(i, j, rgb2wx(hsv2rgb(hsv(v.at(i).at(j) / 16.0 * 360.0, 1.0, 1.0))));
+					vdu->SetCellBackgroundColour(i, j, rgb2wx(hsv2rgb(hsv(v.at(i).at(j) / 256.0 * 360.0, 1.0, 1.0))));
 				}
 				else
 				{
 					std::stringstream s;
-					s << std::setw(2) << std::setfill('0') << (int)v.at(i).at(j);
+					s << std::setw(2) << std::setfill('0') << std::hex << (int)v.at(i).at(j);
 					vdu->SetCellValue(i, j, s.str());
 					vdu->SetCellBackgroundColour(i, j, wxColor("WHITE"));
 				}

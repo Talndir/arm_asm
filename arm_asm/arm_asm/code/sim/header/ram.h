@@ -35,7 +35,7 @@ public:
 	
 	void PrintVDU();
 
-	void GetVDU(std::vector<std::vector<uint8_t>>& v);
+	void GetVDU(std::vector<std::vector<uint8_t>>& v, int page);
 
 private:
 	std::vector<uint8_t> memory;
@@ -147,7 +147,7 @@ inline void RAM<T>::PrintVDU()
 
 // Pass back contents of VDU, which is just memory locations 0x00 to 0xFF
 template<typename T>
-inline void RAM<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
+inline void RAM<T>::GetVDU(std::vector<std::vector<uint8_t>>& v, int page)
 {
 	v.clear();
 
@@ -156,7 +156,7 @@ inline void RAM<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
 	for (unsigned int i = 0; i < 16; ++i)
 	{
 		for (unsigned int j = 0; j < 16; ++j)
-			r.push_back(memory.at(i * 16 + j));
+			r.push_back(memory.at(page * 256 + i * 16 + j));
 
 		v.push_back(r);
 		r.clear();

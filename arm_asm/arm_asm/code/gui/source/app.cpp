@@ -41,9 +41,9 @@ void App::Compile()
 }
 
 // Gets VDU data from Computer
-void App::GetVDU(std::vector<std::vector<uint8_t>>& v)
+void App::GetVDU(std::vector<std::vector<uint8_t>>& v, int page)
 {
-	computer.GetVDU(v);
+	computer.GetVDU(v, page);
 }
 
 // Gets register file data from Computer

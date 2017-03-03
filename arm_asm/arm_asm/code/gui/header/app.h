@@ -25,7 +25,7 @@ public:
 
 	virtual void Compile();
 
-	virtual void GetVDU(std::vector<std::vector<uint8_t>>& v);
+	virtual void GetVDU(std::vector<std::vector<uint8_t>>& v, int page);
 	virtual void GetRegisterFile(std::vector<uint16_t>& v);
 	virtual void GetDecoder(std::vector<uint16_t>& v);
 	virtual void GetRAM(std::vector<uint16_t>& v);

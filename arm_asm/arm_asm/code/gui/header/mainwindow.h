@@ -108,6 +108,7 @@ private:
 	wxTextCtrl* cir;
 	wxCheckBox* ramColourBox;
 	wxSlider* animSpeedSlider;
+	wxTextCtrl* vduPage;
 
 	std::vector<wxTextCtrl*> alu_texts;
 	std::vector<wxTextCtrl*> regfile_texts;

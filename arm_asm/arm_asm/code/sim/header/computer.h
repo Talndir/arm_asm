@@ -31,7 +31,7 @@ public:
 
 	void Reset();
 
-	void GetVDU(std::vector<std::vector<uint8_t>>& v);
+	void GetVDU(std::vector<std::vector<uint8_t>>& v, int page);
 
 	void GetRegisterFile(std::vector<T>& v);
 	void GetDecoder(std::vector<T>& v);
@@ -151,9 +151,9 @@ inline void Computer<T>::Reset()
 
 // Get VDU data from RAM
 template<typename T>
-inline void Computer<T>::GetVDU(std::vector<std::vector<uint8_t>>& v)
+inline void Computer<T>::GetVDU(std::vector<std::vector<uint8_t>>& v, int page)
 {
-	ram.GetVDU(v);
+	ram.GetVDU(v, page);
 }
 
 // Get register file data
