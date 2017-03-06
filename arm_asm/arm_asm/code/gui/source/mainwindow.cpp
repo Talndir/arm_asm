@@ -335,6 +335,10 @@ void MainWindow::OnPaint(wxPaintEvent & event)
 		dc.DrawLine(dNodes.at(i), dNodes.at(i + 1));
 	}
 
+	dc.DrawRotatedText("CONTROL", wxPoint(cNodes.at(2).x, (cNodes.at(2).y + cNodes.at(3).y) / 2), 90);
+	dc.DrawRotatedText("ADDRESS", wxPoint(aNodes.at(2).x, (aNodes.at(2).y + aNodes.at(3).y) / 2), 90);
+	dc.DrawRotatedText("DATA", wxPoint(dNodes.at(2).x, (dNodes.at(2).y + dNodes.at(3).y) / 2), 90);
+
 	wxRect r;
 	wxPoint offset = wxPoint(bus_texts.at(0)->GetSize().x, bus_texts.at(0)->GetSize().y) / 2;
 
