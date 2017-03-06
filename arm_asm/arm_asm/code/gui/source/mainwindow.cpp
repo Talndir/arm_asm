@@ -160,6 +160,7 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	wxMenu* menuFile = new wxMenu;
 	menuFile->Append(MENU_LOAD, "Open\tCTRL-O");
 	menuFile->Append(MENU_SAVE, "Save\tCTRL-S");
+	menuFile->Append(wxID_EXIT, "Exit");
 
 	// Program menu
 	wxMenu* menuProgram = new wxMenu;
@@ -223,10 +224,32 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	this->UpdateLogic();
 }
 
+void MainWindow::OnClose(wxCloseEvent & event)
+{
+	if (event.CanVeto())
+	{
+		wxMessageDialog* msg = new wxMessageDialog(this, "Would you like to save before exiting?", "Exit", wxYES_NO | wxCANCEL, wxDefaultPosition);
+
+		switch (msg->ShowModal())
+		{
+		case wxID_CANCEL:
+			event.Veto();
+			break;
+		case wxID_NO:
+			Destroy();
+			break;
+		case wxID_YES:
+			this->OnLoad(wxCommandEvent());
+			Destroy();
+			break;
+		}
+	}
+}
+
 // Callback function for exiting window
 void MainWindow::OnExit(wxCommandEvent & event)
 {
-	Close(true);
+	this->OnClose(wxCloseEvent());
 }
 
 // Callback function for Menu->Program->Run
@@ -312,7 +335,7 @@ void MainWindow::OnPaint(wxPaintEvent & event)
 	wxPoint offset = wxPoint(bus_texts.at(0)->GetSize().x, bus_texts.at(0)->GetSize().y) / 2;
 
 	// Draw bus values
-	if ((state == PROGRAM_PAUSE_MICROCODE) || (state == PROGRAM_RUN_MICROCODE))
+	if ((state == PROGRAM_PAUSE_MICROCODE) || (state == PROGRAM_RUN_MICROCODE) || (state == PROGRAM_PAUSE_STEP_MICROCODE))
 	{
 		r.SetTopLeft(cAnim.Lerp() - offset);
 		r.SetBottomRight(cAnim.Lerp() + offset);
@@ -328,7 +351,7 @@ void MainWindow::OnPaint(wxPaintEvent & event)
 	}
 
 	// Only update animations if microcode is paused between instructions but still running
-	if (state == PROGRAM_PAUSE_MICROCODE)
+	if ((state == PROGRAM_PAUSE_MICROCODE) || (state == PROGRAM_PAUSE_STEP_MICROCODE))
 	{
 		cAnim.Update();
 		aAnim.Update();
@@ -336,7 +359,7 @@ void MainWindow::OnPaint(wxPaintEvent & event)
 	}
 
 	// Start next microcode after a timed delay
-	if ((cAnim.index == cAnim.points.size() - 1) && (aAnim.index == aAnim.points.size() - 1) && (dAnim.index == dAnim.points.size() - 1) && (!pauseTimer.IsRunning()) && (state == PROGRAM_PAUSE_MICROCODE))
+	if ((cAnim.index == cAnim.points.size() - 1) && (aAnim.index == aAnim.points.size() - 1) && (dAnim.index == dAnim.points.size() - 1) && (!pauseTimer.IsRunning()) && ((state == PROGRAM_PAUSE_MICROCODE) || (state == PROGRAM_PAUSE_STEP_MICROCODE)))
 		pauseTimer.StartOnce(5000 / animSpeedSlider->GetValue());
 }
 
@@ -350,7 +373,10 @@ void MainWindow::OnAnimTimer(wxTimerEvent & event)
 // Callback function for animation pause timer
 void MainWindow::OnPauseTimer(wxTimerEvent & event)
 {
-	state = PROGRAM_RUN_MICROCODE;
+	if (state == PROGRAM_PAUSE_MICROCODE)
+		state = PROGRAM_RUN_MICROCODE;
+	else if (state == PROGRAM_PAUSE_STEP_MICROCODE)
+		state = PROGRAM_HALT;
 }
 
 // Gets text from text box
@@ -638,6 +664,7 @@ void MainWindow::UpdateLogic()
 
 // This wxWidgets MACRO-MANIA sets up the callback functions for menus, timers, paint events etc.
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
+EVT_CLOSE(MainWindow::OnClose)
 EVT_MENU(wxID_EXIT, MainWindow::OnExit)
 EVT_MENU(MENU_RUN, MainWindow::OnRun)
 EVT_MENU(MENU_LOAD, MainWindow::OnLoad)

@@ -30,7 +30,8 @@ enum Program
 	PROGRAM_STEP_INSTRUCTION = 3,
 	PROGRAM_STEP_MICROCODE = 4,
 	PROGRAM_RUN_MICROCODE = 5,
-	PROGRAM_PAUSE_MICROCODE = 6
+	PROGRAM_PAUSE_MICROCODE = 6,
+	PROGRAM_PAUSE_STEP_MICROCODE = 7
 };
 
 // Handles animation interpolation
@@ -81,11 +82,14 @@ public:
 	void UpdateLogic();
 
 	wxSlider* speedSlider;
+	wxTimer pauseTimer;
 	int state;
 	bool cChanged, aChanged, dChanged;
 
 private:
 	AppProxy* parent;
+
+	void OnClose(wxCloseEvent& event);
 
 	void OnExit(wxCommandEvent& event);
 	void OnRun(wxCommandEvent& event);
@@ -115,7 +119,7 @@ private:
 	std::vector<wxTextCtrl*> decoder_texts;
 	std::vector<wxTextCtrl*> bus_texts;
 
-	wxTimer animTimer, pauseTimer;
+	wxTimer animTimer;
 
 	anim cAnim, aAnim, dAnim;
 	std::vector<wxPoint> cNodes, aNodes, dNodes;

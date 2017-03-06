@@ -34,10 +34,39 @@ void App::Compile()
 	ReadFromString(s, data);
 
 	std::vector<uint32_t> code;
-	Parse(data, code);
+	int error = Parse(data, code);
 
-	computer.Reset();
-	computer.Read(code);
+	if (!error)
+	{
+		computer.Reset();
+		computer.Read(code);
+	}
+	else
+	{
+		wxMessageDialog* dialog = new wxMessageDialog(mainWindow, "", "Compilation error", wxOK | wxICON_ERROR, wxDefaultPosition);
+
+		switch (error)
+		{
+		case 1:	// Undefined opcode
+			dialog->SetMessage("Undefined opcode");
+			break;
+		case 2:	// Incorrect nunber of operands
+			dialog->SetMessage("Incorrect number of operands");
+			break;
+		case 3:	// Undefined operand
+			dialog->SetMessage("Undefined operand");
+			break;
+		case 4:	// Operand out of bounds
+			dialog->SetMessage("Operand out of bounds\nRegisters should be between R0-R15\nImmediate values should be between 0-4096");
+			break;
+		case 5:	// Branch destination label does not exist
+			dialog->SetMessage("Branch destination label does not exist");
+			break;
+		}
+
+		dialog->ShowModal();
+	}
+
 }
 
 // Gets VDU data from Computer
@@ -143,7 +172,8 @@ void App::UpdateLogic()
 		break;
 	case PROGRAM_STEP_MICROCODE:
 		RunMicro(mainWindow->cChanged, mainWindow->aChanged, mainWindow->dChanged);
-		mainWindow->state = PROGRAM_HALT;
+		mainWindow->pauseTimer.Stop();
+		mainWindow->state = PROGRAM_PAUSE_STEP_MICROCODE;
 		break;
 	case PROGRAM_RUN_MICROCODE:
 		RunMicro(mainWindow->cChanged, mainWindow->aChanged, mainWindow->dChanged);
