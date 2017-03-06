@@ -63,8 +63,10 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	decoderSizer->Add(decoder_label, wxGBPosition(0, 0));
 	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
 	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(160, 30), wxTE_READONLY));
+	decoder_texts.push_back(new wxTextCtrl(decoderPanel, wxID_ANY, "", wxPoint(), wxSize(80, 30), wxTE_READONLY));
 	decoderSizer->Add(decoder_texts.at(0), wxGBPosition(1, 0));
 	decoderSizer->Add(decoder_texts.at(1), wxGBPosition(2, 0));
+	decoderSizer->Add(decoder_texts.at(2), wxGBPosition(3, 0));
 	decoderPanel->SetSizer(decoderSizer);
 
 	// RAM
@@ -86,7 +88,7 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	animSizer->Add(160, 100, wxGBPosition(1, 0));
 
 	/* Text editor */
-	text = new wxStyledTextCtrl(this, wxID_ANY, wxPoint(), wxSize(250, 720));
+	text = new wxStyledTextCtrl(this, wxID_ANY, wxPoint(), wxSize(340, 600));
 	text->SetMarginWidth(MARGIN_LINE_NUMBERS, 50);
 	text->StyleSetForeground(wxSTC_STYLE_LINENUMBER, wxColour(75, 75, 75));
 	text->StyleSetBackground(wxSTC_STYLE_LINENUMBER, wxColour(220, 220, 220));
@@ -121,6 +123,7 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 	vduPage->SetValue("0");
 
 	/* Registers */
+	/*
 	// General purpose registers
 	wxBoxSizer* regSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -138,13 +141,14 @@ MainWindow::MainWindow(const wxString & title, const wxPoint & pos, const wxSize
 
 	spregSizer->Add(pc);
 	spregSizer->Add(cir);
+	*/
 
 	/* Speed slider */
 	speedSlider = new wxSlider(this, wxID_ANY, 5, 1, 100, wxPoint(0, 0), wxSize(200, 60), wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	/* Add elements to sizers */
-	dataSizer->Add(regSizer, wxGBPosition(0, 0));
-	dataSizer->Add(spregSizer, wxGBPosition(0, 1));
+	//dataSizer->Add(regSizer, wxGBPosition(0, 0));
+	//dataSizer->Add(spregSizer, wxGBPosition(0, 1));
 	dataSizer->Add(vdu, wxGBPosition(0, 2));
 	dataSizer->Add(ramColourBox, wxGBPosition(1, 2));
 	dataSizer->Add(vduPage, wxGBPosition(2, 2));
@@ -438,7 +442,7 @@ void MainWindow::UpdateLogic()
 			s << "R" << std::setw(2) << std::setfill('0') << i;
 			s << ": " << std::setw(4) << std::setfill('0') << std::hex << v.at(i);
 			
-			registerBoxes.at(i)->ChangeValue(s.str());
+			//registerBoxes.at(i)->ChangeValue(s.str());
 			regfile_texts.at(i)->ChangeValue(s.str());
 		}
 	}
@@ -451,7 +455,7 @@ void MainWindow::UpdateLogic()
 		std::stringstream s;
 		s << "PC: " << std::setw(4) << std::setfill('0') << std::hex << v.at(0);	// Program counter
 
-		pc->ChangeValue(s.str());
+		//pc->ChangeValue(s.str());
 		decoder_texts.at(0)->ChangeValue(s.str());
 
 		s.clear();
@@ -459,8 +463,14 @@ void MainWindow::UpdateLogic()
 		uint32_t r = v.at(1) + (v.at(2) << 8) + (v.at(3) << 16) + (v.at(4) << 24);	// Current instruction register, in two pieces
 		s << "CIR: " << std::setw(8) << std::setfill('0') << std::hex << r;
 
-		cir->ChangeValue(s.str());
+		//cir->ChangeValue(s.str());
 		decoder_texts.at(1)->ChangeValue(s.str());
+
+		s.clear();
+		s.str("");
+		s << "LR: " << std::setw(4) << std::setfill('0') << std::hex << v.at(6);	// Link register
+
+		decoder_texts.at(2)->ChangeValue(s.str());
 	}
 
 	// ALU contents

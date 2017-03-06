@@ -614,4 +614,5 @@ inline void Decoder<T>::GetData(std::vector<T>& v)
 	v.push_back((cir.Get() >> 16) & 0xFF);
 	v.push_back((cir.Get() >> 24) & 0xFF);
 	v.push_back(pc_old.Get());
+	v.push_back(lr.Get());
 }
