@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\gui\gui_include.h" />
+    <ClInclude Include="code\gui\header\anim.h" />
     <ClInclude Include="code\gui\header\app.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
